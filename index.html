@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<title>APK Builder</title>
+<style>
+:root{--bg:#fff;--ink:#000;--ac:#FFD600;--mut:#555;--r:6px;--rc:10px;--bw:2px;--sh:3px 3px 0 #000;--g:12px}
+*{box-sizing:border-box;margin:0}
+body{font:15px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top)}
+main,#login{max-width:560px;margin:auto;padding:16px 16px calc(88px + env(safe-area-inset-bottom))}
+h1{font-size:22px;margin-bottom:var(--g)}
+p,.note{color:var(--mut);font-size:13px;margin-bottom:10px}
+ol{padding-left:20px;margin-bottom:14px;font-size:14px}
+a{color:#000}
+[hidden]{display:none!important}
+.card{border:var(--bw) solid #000;border-radius:var(--rc);box-shadow:var(--sh);padding:14px;background:#fff;margin-bottom:14px}
+.card b{font-size:20px}
+input,select,.btn{font:inherit;color:#000;min-height:44px;border:var(--bw) solid #000;border-radius:var(--r);background:#fff;padding:0 10px;width:100%}
+label{display:block;font-weight:600;font-size:13px;margin-bottom:10px}
+label input,label select{margin-top:4px;font-weight:400}
+.btn{background:var(--ac);font-weight:700;box-shadow:var(--sh);cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.btn.w{background:#fff}
+.btn:active{transform:translate(3px,3px);box-shadow:none}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.stack{display:grid;gap:12px}
+.chk{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:400}
+.chk input{width:22px;min-height:22px;accent-color:#000;margin:0}
+input[type=color]{padding:2px}
+details{border:var(--bw) solid #000;border-radius:var(--rc);padding:0 14px 4px;margin-bottom:14px}
+summary{min-height:44px;display:flex;align-items:center;font-weight:700}
+.con{border:var(--bw) solid #000;border-radius:var(--rc);background:#fff;color:#000;font:12px/1.5 ui-monospace,Menlo,monospace;height:300px;overflow:auto;padding:10px;white-space:pre-wrap;word-break:break-all;margin:14px 0 12px}
+.tag{display:inline-block;border:var(--bw) solid #000;border-radius:var(--r);padding:0 8px;font-size:12px;font-weight:700}
+.tag.success{background:var(--ac)}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:var(--bw) solid #000;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;min-height:56px;border:0;background:#fff;font:inherit;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#000}
+nav button.on{background:var(--ac)}
+svg{width:22px;height:22px;fill:none;stroke:#000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div id="login" hidden>
+<h1>Masuk dengan GitHub</h1>
+<ol>
+<li>Buka GitHub, Settings, Developer settings, Personal access tokens (classic).</li>
+<li>Generate token baru, centang <b>repo</b> dan <b>workflow</b>.</li>
+<li>Salin token lalu tempel di bawah.</li>
+</ol>
+<label>Token<input id="tk" type="password" autocomplete="off"></label>
+<label>Repo template<input id="tp" placeholder="username/apk-template" autocapitalize="off"></label>
+<button class="btn" id="lb">Masuk</button>
+<p id="lm" style="margin-top:10px"></p>
+</div>
+
+<main id="app" hidden>
+<section id="v-home"></section>
+<section id="v-build" hidden>
+<h1>Build</h1>
+<label>Nama aplikasi<input id="name" autocomplete="off"></label>
+<label>Package name<input id="pkg" placeholder="otomatis jika kosong" autocapitalize="off"></label>
+<div class="row"><label>versionName<input id="vn" value="1.0.0"></label><label>versionCode<input id="vc" type="number" value="1" inputmode="numeric"></label></div>
+<details><summary>Opsi lanjutan</summary>
+<div class="row"><label>Format<select id="fmt"><option value="apk">APK</option><option value="aab">AAB</option></select></label>
+<label>Varian<select id="var"><option value="release">Release</option><option value="debug">Debug</option></select></label></div>
+<div class="row"><label>minSdk (min 26)<input id="min" type="number" value="26" inputmode="numeric"></label>
+<label>Orientasi<select id="ori"><option value="unspecified">Bebas</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label></div>
+<label>URL WebView<input id="url" type="url" placeholder="kosong = layar teks" autocapitalize="off"></label>
+<label>Nama file output<input id="out" placeholder="otomatis" autocapitalize="off"></label>
+<label>Warna tema<input id="col" type="color" value="#ffd600"></label>
+<label>Argumen Gradle<input id="ar" placeholder="contoh: --warning-mode all" autocapitalize="off"></label>
+<label class="chk"><input type="checkbox" id="mf">R8 minify dan shrink resources</label>
+<label class="chk"><input type="checkbox" id="abi">Pisahkan APK per ABI</label>
+<label class="chk"><input type="checkbox" id="fb">google-services.json dummy</label>
+<label class="chk"><input type="checkbox" id="ai" checked>versionCode naik otomatis</label>
+<p>Izin</p>
+<label class="chk"><input class="pm" type="checkbox" value="internet" checked>Internet</label>
+<label class="chk"><input class="pm" type="checkbox" value="camera">Kamera</label>
+<label class="chk"><input class="pm" type="checkbox" value="storage">Penyimpanan</label>
+<label class="chk"><input class="pm" type="checkbox" value="location">Lokasi</label>
+<label class="chk"><input class="pm" type="checkbox" value="notifications">Notifikasi</label>
+</details>
+<button class="btn" id="go">Build</button>
+<p id="bm" style="margin-top:8px"></p>
+<div class="con" id="con">Log build tampil di sini.</div>
+<div class="row"><button class="btn w" id="cp">Salin log</button><button class="btn w" id="cn">Batalkan</button></div>
+<div class="stack" id="dl" style="margin-top:14px"></div>
+</section>
+<section id="v-hist" hidden></section>
+</main>
+
+<nav id="nav" hidden>
+<button data-t="0"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Beranda</button>
+<button data-t="1"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9z"/></svg>Build</button>
+<button data-t="2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Riwayat</button>
+</nav>
+
+<script>
+const $=s=>document.querySelector(s),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S=ld("s",{}),H=ld("h",[]),run=null,busy=false,stp="",lg="";
+const LAB={success:"Berhasil",failure:"Gagal",running:"Berjalan",cancelled:"Dibatalkan"};
+const lab=s=>LAB[s]||"Terputus";
+
+async function api(p,o={}){
+ const r=await fetch("https://api.github.com"+p,{...o,headers:{Authorization:"Bearer "+S.t,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"}});
+ if(r.status===403&&r.headers.get("x-ratelimit-remaining")==="0")throw Error("Batas API GitHub habis. Coba lagi beberapa menit lagi.");
+ if(o.raw)return r;
+ if(!r.ok){let m="";try{m=(await r.json()).message}catch{}throw Error(r.status+" "+m)}
+ return r.status===204?null:r.json();
+}
+
+async function login(){
+ const t=$("#tk").value.trim(),tp=$("#tp").value.trim(),m=$("#lm");
+ if(!t||!/^[\w.-]+\/[\w.-]+$/.test(tp)){m.textContent="Isi token dan repo template (username/repo).";return}
+ $("#lb").disabled=true;
+ try{
+  S={t,tp};m.textContent="Memeriksa token...";
+  const u=await api("/user");S.u=u.login;S.r=u.login+"/apk-builder";
+  try{await api("/repos/"+S.r)}catch{
+   m.textContent="Membuat repo build...";
+   await api(`/repos/${tp}/generate`,{method:"POST",body:JSON.stringify({owner:u.login,name:"apk-builder",private:false})});
+   for(let i=0;i<15;i++){await sleep(2000);try{await api(`/repos/${S.r}/contents/.github/workflows/build.yml`);break}catch{}}
+  }
+  sv("s",S);start();
+ }catch(e){m.textContent=e.message;S={}}
+ $("#lb").disabled=false;
+}
+function out(){localStorage.removeItem("s");location.reload()}
+
+function start(){
+ $("#login").hidden=true;$("#app").hidden=false;$("#nav").hidden=false;
+ H.forEach(h=>{if(h.st==="running")h.st="terputus"});sv("h",H);
+ go(0);
+}
+function go(n){
+ ["#v-home","#v-build","#v-hist"].forEach((s,i)=>$(s).hidden=i!==n);
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",+b.dataset.t===n));
+ if(n===0)home();if(n===2)hist();scrollTo(0,0);
+}
+function home(){
+ const l=H[0],ok=H.filter(h=>h.st==="success").length;
+ $("#v-home").innerHTML=`<h1>Beranda</h1>
+ <div class="row"><div class="card"><b>${H.length}</b><br>Build</div><div class="card"><b>${ok}</b><br>Berhasil</div></div>
+ <div class="card">Build terakhir<br><b>${l?esc(l.name)+" "+esc(l.vn):"Belum ada"}</b>${l?` <span class="tag ${l.st}">${lab(l.st)}</span>`:""}</div>
+ <div class="card">Repo<br><a href="https://github.com/${S.r}" target="_blank" rel="noopener">${S.r}</a></div>
+ <div class="stack"><button class="btn" onclick="go(1)">Buat build baru</button>
+ <button class="btn w" onclick="go(2)">Lihat riwayat</button>
+ <button class="btn w" onclick="out()">Keluar</button></div>`;
+}
+function hist(){
+ $("#v-hist").innerHTML="<h1>Riwayat</h1>"+(H.length?H.map((h,i)=>`<div class="card">
+ <b style="font-size:16px">${esc(h.name)}</b> <span class="tag ${h.st}">${lab(h.st)}</span>
+ <p style="margin:6px 0 10px">v${esc(h.vn)} (${h.vc}) &middot; ${new Date(h.t).toLocaleString("id-ID",{dateStyle:"short",timeStyle:"short"})}${h.dur!=null?" &middot; "+h.dur+" dtk":""}</p>
+ <div class="stack">${(h.assets||[]).map(a=>`<a class="btn" href="${esc(a.u)}">Unduh ${esc(a.n)}</a>`).join("")}
+ <div class="row"><button class="btn w" onclick="again(${i})">Ulangi</button><button class="btn w" onclick="del(${i})">Hapus</button></div></div></div>`).join(""):"<p>Belum ada build. Mulai dari tab Build.</p>");
+}
+function del(i){H.splice(i,1);sv("h",H);hist()}
+function again(i){
+ const c=H[i].cfg,g=x=>$("#"+x);
+ g("name").value=c.name;g("pkg").value=c.pkg;g("vn").value=c.vn;g("vc").value=c.vc;g("min").value=c.min;g("fmt").value=c.fmt;g("var").value=c.var;
+ g("mf").checked=c.minify;g("abi").checked=c.abi;g("ori").value=c.orient;g("url").value=c.url;g("col").value=c.color;g("fb").checked=c.fb;g("out").value=c.out;g("ar").value=c.args;
+ document.querySelectorAll(".pm").forEach(x=>x.checked=c.perms.includes(x.value));go(1);
+}
+function cfg(){
+ const g=i=>$("#"+i),n=g("name").value.trim();
+ if(!n)throw Error("Nama aplikasi wajib diisi.");
+ const slug=n.toLowerCase().replace(/[^a-z0-9]/g,"");
+ const pkg=g("pkg").value.trim()||"com.app."+(/^[a-z]/.test(slug)?slug:"a"+slug);
+ if(!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(pkg))throw Error("Package name tidak valid. Contoh: com.contoh.app");
+ let vc=+g("vc").value||1;if(g("ai").checked)vc=Math.max(vc,(S.vc||0)+1);
+ g("vc").value=vc;S.vc=vc;sv("s",S);
+ return{name:n,pkg,vn:g("vn").value.trim()||"1.0.0",vc,min:+g("min").value||26,fmt:g("fmt").value,var:g("var").value,minify:g("mf").checked,abi:g("abi").checked,orient:g("ori").value,perms:[...document.querySelectorAll(".pm:checked")].map(x=>x.value),url:g("url").value.trim(),color:g("col").value,fb:g("fb").checked,out:g("out").value.trim().replace(/[^\w.-]/g,"")||slug||"app",args:g("ar").value.trim()};
+}
+const IC={success:"[OK] ",failure:"[ERR]",in_progress:"[...]",cancelled:"[ x ]"};
+function paint(m){const e=$("#con");e.textContent=(m?m+"\n":"")+stp+(lg?"\n\n"+lg:"");e.scrollTop=e.scrollHeight}
+function steps(jobs){stp=jobs.map(j=>j.steps.map(s=>(IC[s.conclusion||s.status]||"[ - ]")+" "+s.name).join("\n")).join("\n");paint()}
+
+async function build(){
+ if(busy)return;
+ let c;try{c=cfg()}catch(e){$("#bm").textContent=e.message;return}
+ busy=true;run=null;stp="";lg="";$("#go").disabled=true;$("#bm").textContent="";$("#dl").innerHTML="";paint("Mengirim permintaan build...");
+ const e={id:Date.now(),name:c.name,vn:c.vn,vc:c.vc,st:"running",t:Date.now(),cfg:c};H.unshift(e);sv("h",H);
+ try{
+  const prev=(await api(`/repos/${S.r}/actions/runs?per_page=1`)).workflow_runs[0]?.id||0;
+  const rp=await api("/repos/"+S.r);
+  await api(`/repos/${S.r}/actions/workflows/build.yml/dispatches`,{method:"POST",body:JSON.stringify({ref:rp.default_branch,inputs:{config:JSON.stringify(c)}})});
+  paint("Menunggu runner...");
+  for(let i=0;i<20&&!run;i++){await sleep(3000);run=(await api(`/repos/${S.r}/actions/runs?event=workflow_dispatch&per_page=5`)).workflow_runs.find(r=>r.id>prev)||null}
+  if(!run)throw Error("Run tidak ditemukan. Pastikan build.yml ada di repo.");
+  let r=run,jobs=[];
+  while(true){
+   jobs=(await api(`/repos/${S.r}/actions/runs/${run.id}/jobs`)).jobs;steps(jobs);
+   r=await api(`/repos/${S.r}/actions/runs/${run.id}`);
+   if(r.status==="completed")break;await sleep(3000);
+  }
+  try{
+   const x=await api(`/repos/${S.r}/actions/jobs/${jobs[0].id}/logs`,{raw:true});
+   lg=(await x.text()).replace(/^\S+Z /gm,"").split("\n").slice(-300).join("\n");
+  }catch{lg="Log lengkap tidak bisa dimuat. Buka run di GitHub:\n"+r.html_url}
+  paint();
+  e.st=r.conclusion;e.dur=Math.round((Date.parse(r.updated_at)-Date.parse(r.run_started_at))/1000);
+  if(e.st==="success"){
+   const rel=(await api(`/repos/${S.r}/releases?per_page=1`))[0];
+   e.assets=rel.assets.map(a=>({n:a.name,u:a.browser_download_url}));
+   $("#dl").innerHTML=e.assets.map(a=>`<a class="btn" href="${esc(a.u)}">Unduh ${esc(a.n)}</a>`).join("");
+  }
+ }catch(err){e.st="failure";$("#bm").textContent=err.message;paint("Error: "+err.message)}
+ busy=false;run=null;$("#go").disabled=false;sv("h",H);
+}
+async function cancel(){
+ if(!run)return;
+ try{await api(`/repos/${S.r}/actions/runs/${run.id}/cancel`,{method:"POST"});$("#bm").textContent="Pembatalan dikirim."}catch(e){$("#bm").textContent=e.message}
+}
+$("#lb").onclick=login;$("#go").onclick=build;$("#cn").onclick=cancel;
+$("#cp").onclick=()=>navigator.clipboard.writeText($("#con").textContent).then(()=>$("#bm").textContent="Log disalin.");
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(+b.dataset.t));
+if(S.t&&S.r)start();else $("#login").hidden=false;
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>
