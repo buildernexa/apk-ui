@@ -1,1 +1,973 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpolygon points='16,3 28,10 16,17 4,10' fill='%23fff'/%3E%3Cpolygon points='4,10 16,17 16,30 4,23' fill='%23FFD600'/%3E%3Cpolygon points='28,10 16,17 16,30 28,23' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E">
+<title>NexaBuild</title>
+<style>
+:root{--bg:#fff;--ink:#000;--ac:#FFD600;--mut:#555;--r:6px;--rc:10px;--bw:2px;--sh:3px 3px 0 #000;--g:12px}
+*{box-sizing:border-box;margin:0}
+body{font:15px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:560px;margin:auto;padding:16px 16px calc(116px + env(safe-area-inset-bottom))}
+h1{font-size:22px;margin-bottom:var(--g)}
+h2{font-size:16px;margin:4px 0 10px}
+p,.note{color:var(--mut);font-size:13px;margin-bottom:10px}
+ol{padding-left:20px;margin-bottom:12px;font-size:14px}
+a{color:#000}[hidden]{display:none!important}
+.card{border:var(--bw) solid #000;border-radius:var(--rc);box-shadow:var(--sh);padding:14px;background:#fff;margin-bottom:14px}
+input,select,.btn{font:inherit;color:#000;min-height:44px;border:var(--bw) solid #000;border-radius:var(--r);background:#fff;padding:0 10px;width:100%}
+label{display:block;font-weight:600;font-size:13px;margin-bottom:10px}
+label input,label select{margin-top:4px;font-weight:400}
+.btn{background:var(--ac);font-weight:700;box-shadow:var(--sh);cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.btn.w{background:#fff}.btn:active{transform:translate(3px,3px);box-shadow:none}.btn:disabled{opacity:.5}
+:focus-visible{outline:3px solid #000;outline-offset:2px}
+.row{display:flex;gap:10px;margin-bottom:14px}.row>*{flex:1;min-width:0}.row .card,.row label{margin-bottom:0}
+.stack{display:grid;gap:12px;margin-bottom:12px}
+.chk{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:400}
+.chk input{width:22px;min-height:22px;accent-color:#000;margin:0}
+input[type=color]{padding:2px}
+details{border:var(--bw) solid #000;border-radius:var(--rc);padding:0 14px 4px;margin-bottom:14px}
+summary{min-height:44px;display:flex;align-items:center;font-weight:700}
+.con{border:var(--bw) solid #000;border-radius:var(--rc);background:#fff;color:#000;font:12px/1.5 ui-monospace,Menlo,monospace;height:300px;overflow:auto;padding:10px;white-space:pre-wrap;word-break:break-all;margin:14px 0 12px}
+.tag{display:inline-block;border:var(--bw) solid #000;border-radius:999px;padding:0 9px;font-size:12px;font-weight:700;background:#fff;color:#000;line-height:20px}
+.tag.success{background:var(--ac)}
+.ell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+svg{width:22px;height:22px;fill:none;stroke:#000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#bar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:var(--bw) solid #000;padding:calc(6px + env(safe-area-inset-top)) 10px 6px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;text-align:center}
+#bar h1{font-size:18px;margin:0}
+.sq{width:44px;height:44px;min-height:44px;padding:0;border:var(--bw) solid #000;border-radius:var(--r);background:#fff;display:grid;place-items:center;cursor:pointer}
+svg.lg{width:34px;height:34px;margin:auto}
+.pf .top{display:flex;gap:12px;align-items:center}
+.av{position:relative;width:64px;height:64px;flex:none}
+.av img{width:64px;height:64px;border-radius:50%;border:var(--bw) solid #000;object-fit:cover;background:#eee;display:block}
+.cam{position:absolute;right:-6px;bottom:-6px;width:28px;height:28px;border:var(--bw) solid #000;border-radius:50%;background:var(--ac);display:grid;place-items:center;padding:0}
+.cam svg{width:14px;height:14px}
+.who{flex:1;min-width:0}.who b{font-size:17px;display:block}.who .note{margin:0}
+.clk{display:grid;justify-items:center;gap:6px}.clk svg{width:48px;height:48px}
+.chips{display:flex;gap:8px;margin-top:12px}
+.ib{width:40px;height:40px;border:var(--bw) solid #000;border-radius:var(--r);background:var(--ac);display:grid;place-items:center;margin-bottom:8px}
+.it b{font-size:15px;display:block}.it .note{margin:2px 0 0}
+.bar{height:8px;border:var(--bw) solid #000;border-radius:999px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:#000}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.g3 .card{padding:10px;margin:0;display:grid;gap:4px;justify-items:start}.g3 b{font-size:24px;line-height:1}.g3 .note{margin:0}
+.sk{background:#e8e8e8}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;border-top:1px solid #000}
+.li:first-of-type{border-top:0}
+nav{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;bottom:calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px;background:#fff;border:var(--bw) solid #000;border-radius:999px;box-shadow:var(--sh);z-index:10}
+nav button{min-height:48px;border:var(--bw) solid transparent;border-radius:999px;background:#fff;color:#000;font:inherit;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s,transform .08s}
+nav button:active{transform:translate(2px,2px)}
+nav button[aria-current=page]{background:var(--ac);border-color:#000}
+#sc{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;z-index:20}
+#dr{position:fixed;top:0;bottom:0;left:0;width:min(88vw,340px);background:#fff;border-right:var(--bw) solid #000;transform:translateX(-100%);visibility:hidden;transition:transform .2s,visibility .2s;z-index:30;overflow:auto;padding:calc(12px + env(safe-area-inset-top)) 16px 24px}
+.open #sc{opacity:1;visibility:visible}.open #dr{transform:none;visibility:visible}
+.dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.dh h2{margin:0;font-size:18px}
+.pw{display:flex;gap:8px;margin-top:4px}.pw input{margin:0}
+#ts{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#000;color:#fff;border-radius:var(--r);padding:10px 14px;font-size:14px;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:40}
+#ts.show{opacity:1;transform:translate(-50%,0)}
+#pt{position:fixed;left:0;right:0;top:calc(56px + env(safe-area-inset-top));text-align:center;font-size:13px;transform:translateY(-60px);z-index:5;padding:6px;transition:transform .15s}
+h1{letter-spacing:-.01em}
+.wh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.wh h2{margin:0;font-size:16px;font-weight:800}
+@keyframes land{from{opacity:0;transform:translate(6px,6px)}}
+@keyframes blink{50%{opacity:.35}}
+@keyframes grow{from{transform:scaleY(0)}}
+.pop>*{animation:land .3s cubic-bezier(.2,.9,.3,1.2) backwards}
+.pop>:nth-child(2){animation-delay:.05s}.pop>:nth-child(3){animation-delay:.1s}.pop>:nth-child(4){animation-delay:.15s}.pop>:nth-child(5){animation-delay:.2s}.pop>:nth-child(6){animation-delay:.25s}.pop>:nth-child(7){animation-delay:.3s}
+.live{animation:blink 1s steps(2) infinite}
+.pl{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.ps{display:grid;gap:5px;justify-items:center;font-size:11px;font-weight:700}
+.ps i{width:100%;height:36px;border:var(--bw) solid #000;border-radius:var(--r);display:grid;place-items:center;font-style:normal;font-size:11px;background:#fff}
+.ps.ok i{background:#000;color:#fff}.ps.on i{background:var(--ac);animation:blink 1s steps(2) infinite}.ps.er i{box-shadow:inset 0 0 0 2px #000}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.qa{display:flex;align-items:center;gap:10px;text-align:left;font:inherit;font-weight:700;font-size:14px;color:#000;min-height:64px;padding:10px;border:var(--bw) solid #000;border-radius:var(--rc);background:#fff;box-shadow:var(--sh);cursor:pointer;text-decoration:none;transition:transform .08s,box-shadow .08s}
+.qa:active{transform:translate(3px,3px);box-shadow:none}.qa:disabled{opacity:.45}
+.qa .ib{margin:0;width:36px;height:36px;flex:none}
+.ch{display:flex;align-items:flex-end;gap:8px;height:108px}
+.cb{flex:1;display:grid;justify-items:center;align-items:end;gap:3px;font-size:11px;font-weight:700}
+.cb i{width:100%;border:var(--bw) solid #000;border-radius:4px;background:#000;display:block;transform-origin:bottom;animation:grow .35s ease-out backwards}
+.card .cb b{font-size:12px;min-height:14px}
 
+:root{--t1:.12s;--t2:.2s;--t3:.32s;--ez:cubic-bezier(.2,.9,.3,1.2)}
+textarea{font:inherit;color:#000;border:var(--bw) solid #000;border-radius:var(--r);padding:8px 10px;width:100%;min-height:72px;background:#fff;margin-top:4px;font-weight:400}
+svg.lg{width:36px;height:36px;margin:auto;overflow:visible;transform-origin:50% 50%}
+@keyframes asm{from{opacity:0;transform:translateY(-12px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slide{from{opacity:0;transform:translateX(14px)}}
+.lg polygon{animation:asm var(--t3) var(--ez) backwards}.lg polygon:nth-child(2){animation-delay:.1s}.lg polygon:nth-child(3){animation-delay:.2s}
+.lg.spin{animation:spin 3s steps(6) infinite}
+.in{animation:slide var(--t2) ease-out}
+[aria-invalid=true]{border-width:3px}
+.fe{display:block;min-height:16px;font-size:12px;font-weight:700;margin-top:2px}
+.tpl{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px 8px}
+.chipb{flex:none;min-height:40px;padding:0 14px;border:var(--bw) solid #000;border-radius:999px;background:#fff;color:#000;font:inherit;font-weight:700;box-shadow:2px 2px 0 #000;transition:transform var(--t1),box-shadow var(--t1)}
+.chipb:active{transform:translate(2px,2px);box-shadow:none}
+.qb{border:var(--bw) dashed #000;border-radius:var(--r);padding:10px;font-size:13px;font-weight:700;margin-bottom:14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;margin-bottom:10px}.kv dt{font-weight:700}.kv dd{margin:0;min-width:0;word-break:break-all}
+.fl{border-top:1px solid #000;padding:8px 0;font-size:13px;word-break:break-all}.mono{font:11px ui-monospace,Menlo,monospace;color:var(--mut)}
+#dp{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;top:calc(64px + env(safe-area-inset-top));z-index:15;background:#fff;border:var(--bw) solid #000;border-radius:var(--rc);box-shadow:var(--sh);padding:12px}
+#dp .wh{margin-bottom:8px;gap:8px}#dp p{margin:6px 0 0}
+
+:root{--f:"Space Grotesk",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,Menlo,monospace}
+body{font-family:var(--f);-webkit-font-smoothing:antialiased}
+h1{font-size:28px;line-height:1.1;font-weight:700}h2{font-weight:700}
+.card{padding:16px}
+label{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.chk,.btn,.qa,.chipb,.tag,.menu button{text-transform:none;letter-spacing:0}
+input,select,textarea{box-shadow:2px 2px 0 #000;transition:box-shadow var(--t1),transform var(--t1),background var(--t1)}
+input:focus,select:focus,textarea:focus{background:#FFFBE0;box-shadow:4px 4px 0 #000;transform:translate(-1px,-1px);outline:none}
+input[type=checkbox]{box-shadow:none;transform:none}
+details{box-shadow:var(--sh)}
+.sq{box-shadow:2px 2px 0 #000;transition:transform var(--t1),box-shadow var(--t1)}.sq:active{transform:translate(2px,2px);box-shadow:none}
+#dr{box-shadow:4px 0 0 #000}
+.btn{min-height:48px}
+#ts{border:var(--bw) solid #fff;box-shadow:3px 3px 0 var(--ac)}
+.term{border:var(--bw) solid #000;border-radius:var(--rc);box-shadow:var(--sh);background:#fff;margin:16px 0;position:relative}
+.term.land{animation:land var(--t3) var(--ez)}
+.th{display:flex;align-items:center;gap:12px;padding:14px}
+.pc{font:700 40px/1 var(--f);display:flex;align-items:baseline;gap:2px;min-width:88px}.pc span{font-size:18px}
+.tx{flex:1;min-width:0;display:grid;gap:2px}.tx span{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tx em{font:500 12px var(--m);font-style:normal;color:var(--mut)}
+.pbar{height:14px;border-top:var(--bw) solid #000;border-bottom:var(--bw) solid #000;background:#fff}
+.pbar i{display:block;height:100%;width:0;background:var(--ac);border-right:0 solid #000;transition:width .25s linear}
+.menu{position:absolute;right:10px;top:62px;z-index:5;width:min(260px,calc(100% - 20px));background:#fff;border:var(--bw) solid #000;border-radius:var(--rc);box-shadow:var(--sh);padding:8px;display:grid;gap:6px}
+.menu button,.menu input{min-height:40px;border:var(--bw) solid #000;border-radius:var(--r);background:#fff;color:#000;font:700 13px var(--f);padding:0 10px;width:100%;text-align:left;box-shadow:none}
+.menu button[aria-pressed=true]{background:var(--ac)}
+.mf{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mf button{text-align:center;padding:0}
+.hint{border-bottom:var(--bw) solid #000;padding:12px 14px;background:var(--ac)}.hint p{color:#000;margin:4px 0 0}
+#tb{max-height:360px;overflow:auto;padding:12px 14px;font:500 13px/1.6 var(--m)}
+.nl{display:flex;align-items:center;gap:10px;min-height:28px}
+.nl i{width:12px;height:12px;border:var(--bw) solid #000;border-radius:50%;flex:none}
+.nl.ok i{background:#000}.nl.on i{background:var(--ac);animation:blink 1s steps(2) infinite}.nl.er i{box-shadow:inset 0 0 0 3px #000}
+.nl.nt i{display:none}.nl.nt{color:var(--mut)}
+.nl span{flex:1;min-width:0}.nl.on span::after{content:"_";animation:blink 1s steps(2) infinite}.nl em{font-style:normal;color:var(--mut);font-size:12px}
+#lgd{border:0;border-top:var(--bw) solid #000;border-radius:0;box-shadow:none;margin:10px -14px 0;padding:0 14px}
+#lgd>summary{font:700 13px var(--f)}
+#gl details{border:0;border-top:1px solid #000;border-radius:0;box-shadow:none;margin:0;padding:0}
+#gl summary{font:600 12px var(--m);min-height:36px;gap:8px}
+pre{font:500 12px/1.55 var(--m);white-space:pre-wrap;word-break:break-all;padding:0 0 10px;margin:0;color:#000}
+.ll{display:block}.ll[hidden]{display:none}
+.ln{display:inline-block;width:38px;color:var(--mut);user-select:none}
+.Le,.Ls{background:var(--ac);font-weight:700}.Lw{font-weight:700;text-decoration:underline}
+
+.fr{border:var(--bw) solid #000;border-radius:22px;box-shadow:var(--sh);padding:10px;display:grid;gap:10px;margin-bottom:14px;background:#fff}
+.fr .card{margin:0;border-radius:14px;box-shadow:2px 2px 0 #000;padding:12px}
+.fr .pf{min-height:120px;display:flex;flex-direction:column;justify-content:space-between}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fr .it{display:flex;align-items:center;gap:10px;min-height:64px;padding:8px 10px}
+.fr .it .ib{margin:0;width:40px;height:40px;flex:none}.fr .ib{border-radius:10px}
+.it .tt{min-width:0;flex:1}.it .tt b{font-size:14px;display:block}.it .tt .note{margin:0;font-size:12px;display:block}
+.fr .g3{margin:0}.fr .g3 .card{min-height:104px;padding:10px;align-content:space-between}
+.stp{display:flex;gap:6px;list-style:none;padding:0;margin:0 0 16px}
+.stp li{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;border:var(--bw) solid #000;border-radius:999px;font-size:12px;font-weight:700;background:#fff;transition:background var(--t2),color var(--t2),box-shadow var(--t2)}
+.stp li b{width:20px;height:20px;border:var(--bw) solid currentColor;border-radius:50%;display:grid;place-items:center;font-size:11px}
+.stp li.on{background:var(--ac);box-shadow:2px 2px 0 #000}.stp li.ok{background:#000;color:#fff}
+.sp{animation:slide var(--t3) var(--ez)}
+.src{display:grid;gap:10px;margin-bottom:14px}
+.src button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:64px;padding:10px 14px;border:var(--bw) solid #000;border-radius:var(--rc);background:#fff;color:#000;font:700 15px var(--f);box-shadow:var(--sh);transition:transform var(--t1),box-shadow var(--t1),background var(--t2)}
+.src button small{font:400 12px var(--f);color:var(--mut)}
+.src button[aria-pressed=true]{background:var(--ac)}.src button[aria-pressed=true] small{color:#000}
+.src button:active{transform:translate(3px,3px);box-shadow:none}
+.dz{display:grid;justify-items:center;gap:6px;text-align:center;padding:24px 14px;border:var(--bw) dashed #000;border-radius:var(--rc);background:#fff;cursor:pointer;margin-bottom:12px;text-transform:none;letter-spacing:0;transition:background var(--t2),transform var(--t1),box-shadow var(--t2)}
+.dz:active{transform:translate(2px,2px)}.dz.has{border-style:solid;background:#FFFBE0;box-shadow:var(--sh)}
+.dz input{display:none}.dz svg{width:32px;height:32px}.dz b{font-size:15px;word-break:break-all}.dz span{font-size:12px;color:var(--mut);font-weight:400}
+.au{display:inline-block;margin-left:6px;vertical-align:middle;text-transform:none;letter-spacing:0}
+.au em{font-style:normal;border:var(--bw) solid #000;border-radius:999px;padding:0 8px;font-size:11px;background:var(--ac)}
+.au button{border:var(--bw) solid #000;border-radius:999px;background:#fff;font:700 11px var(--f);padding:0 8px;min-height:24px;color:#000}
+.nv{display:flex;gap:10px;margin:16px 0}.nv .btn{flex:1}
+.wl{margin:8px 0 0;padding-left:18px;font-size:13px}.wl li{margin-bottom:4px}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}}
+@keyframes ind{from{transform:translateX(0)}to{transform:translateX(185%)}}
+.nl{animation:rise .25s ease-out}
+details[open]>*:not(summary){animation:rise .25s ease-out}
+.nl.id i{display:none}.nl.id span::after{content:"_";animation:blink 1s steps(2) infinite}
+.bar i.ind{width:35%;animation:ind 1.1s ease-in-out infinite alternate}
+
+h1{font-size:22px}
+label{font-size:11px;margin-bottom:8px}
+input,select,textarea{font-size:14px}
+.btn{min-height:44px;font-size:14px}
+.sc{border:var(--bw) solid #000;border-radius:var(--rc);box-shadow:var(--sh);padding:12px;margin-bottom:12px;background:#fff}
+details.sc{padding:0 12px}details.sc[open]{padding-bottom:10px}
+.sh{display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:0;font-size:14px}
+div.sc>.sh{min-height:28px;margin-bottom:8px}
+details.sc>summary.sh{cursor:pointer}
+.g2c{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g2c>label{min-width:0}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.seg3 button{min-height:44px;border:var(--bw) solid #000;border-radius:var(--r);background:#fff;color:#000;font:700 13px var(--f);box-shadow:2px 2px 0 #000;transition:transform var(--t1),box-shadow var(--t1),background var(--t2)}
+.seg3 button[aria-pressed=true]{background:var(--ac);box-shadow:none;transform:translate(2px,2px)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;border-top:1px solid #000;font-size:14px;font-weight:500;text-transform:none;letter-spacing:0;margin:0}
+.sw input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:none;width:46px;height:26px;min-height:0;margin:0;padding:0;border:var(--bw) solid #000;border-radius:999px;background:#fff;box-shadow:none;position:relative;cursor:pointer;transform:none;transition:background var(--t2)}
+.sw input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border:var(--bw) solid #000;border-radius:50%;background:#fff;transition:transform var(--t2) var(--ez),background var(--t2)}
+.sw input[type=checkbox]:checked{background:var(--ac)}.sw input[type=checkbox]:checked::after{transform:translateX(20px);background:#000}
+.sw input[type=color]{width:46px;height:30px;min-height:0;padding:1px;box-shadow:none;margin:0 0 0 auto}
+.dz{display:flex;align-items:center;gap:10px;padding:10px;min-height:64px;border:var(--bw) dashed #000;border-radius:var(--rc);background:#fff;box-shadow:2px 2px 0 #000;cursor:pointer;margin:0 0 10px;text-transform:none;letter-spacing:0;transition:background var(--t2),transform var(--t1),box-shadow var(--t1)}
+.dz:active{transform:translate(2px,2px);box-shadow:none}.dz.has{border-style:solid;background:#FFFBE0}
+.dz input{display:none}
+.dzi{width:40px;height:40px;flex:none;border:var(--bw) solid #000;border-radius:8px;background:var(--ac);display:grid;place-items:center}.dzi svg{width:20px;height:20px}
+.dzt{flex:1;min-width:0;display:grid;gap:1px}.dzt b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dzt em{font-style:normal;font-size:12px;font-weight:400;color:var(--mut)}
+.dzb{flex:none;border:var(--bw) solid #000;border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;background:#fff;box-shadow:2px 2px 0 #000}
+#dzx{width:34px;height:34px;min-height:34px;flex:none}#dzx svg{width:16px;height:16px}
+.ct{width:100%;border-collapse:collapse;font-size:12px}.ct td{border:1px solid #000;padding:6px;word-break:break-all}.ct tr.df td{background:#FFFBE0;font-weight:700}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header id="bar">
+<button class="sq" id="mn" aria-label="Buka menu koneksi"><svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M3 18h18"/></svg></button>
+<h1>NexaBuild</h1>
+<svg class="lg" id="logo" viewBox="0 0 32 32" aria-hidden="true"><polygon points="16,3 28,10 16,17 4,10" fill="#fff"/><polygon points="4,10 16,17 16,30 4,23" fill="#FFD600"/><polygon points="28,10 16,17 16,30 28,23" fill="#fff"/></svg>
+</header>
+<div id="pt">Tarik untuk muat ulang</div>
+
+<main>
+<section id="v-home"></section>
+<section id="v-build" hidden>
+<h1>Build</h1>
+<div class="qb" id="qb" hidden></div><div class="qb" id="sync" hidden></div>
+
+<div class="sc">
+<div class="sh"><b>Sumber proyek</b><span class="tag" id="ut" hidden></span></div>
+<select id="sr" hidden><option value="">-</option><option value="zip">zip</option><option value="url">url</option><option value="scratch">scratch</option></select>
+<div class="seg3" id="srcs"><button data-v="zip" aria-pressed="false">File</button><button data-v="url" aria-pressed="false">URL</button><button data-v="scratch" aria-pressed="false">Dari nol</button></div>
+<div id="szf" hidden><label class="dz" id="dz"><input id="zf" type="file" accept=".zip,.html,.htm"><span class="dzi"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4"/></svg></span><span class="dzt"><b id="dzt">Pilih ZIP atau HTML</b><em id="dzs">Maks 50 MB</em></span><span class="dzb" id="dzb">Pilih</span><button class="sq" id="dzx" hidden aria-label="Hapus file"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label></div>
+<div id="uf" hidden><label>URL target<input id="su" type="url" placeholder="Situs web, repo Git, atau link ZIP" autocapitalize="off"></label><button class="btn w" id="anb" style="margin-bottom:10px">Baca URL</button></div>
+<div id="sbw" hidden><div class="g2c"><label id="rfw">Branch / tag<input id="rf" placeholder="default" autocapitalize="off"></label><label>Subfolder<input id="sb" placeholder="root" autocapitalize="off"></label></div></div>
+<div id="an"></div>
+<label id="kdw" hidden>Jenis proyek (manual)<select id="kd"><option value="">Pilih jenis</option><option value="web">Web (HTML/JS)</option><option value="flutter">Flutter</option><option value="capacitor">Capacitor</option><option value="rn">React Native / Expo</option><option value="gradle">Gradle Android</option></select></label>
+<div id="tplw" hidden><p style="margin:10px 0 6px">Template cepat</p><div class="tpl" id="tpl"></div></div>
+</div>
+
+<div class="sc">
+<div class="sh"><b>Identitas</b></div>
+<label>Nama aplikasi<span class="au" data-f="name"></span><input id="name" autocomplete="off"></label>
+<label>Package name<span class="au" data-f="pkg"></span><input id="pkg" placeholder="otomatis jika kosong" autocapitalize="off"><small class="fe" id="pe"></small></label>
+<div class="g2c"><label>versionName<span class="au" data-f="vn"></span><input id="vn" value="1.0.0"></label><label>versionCode<span class="au" data-f="vc"></span><input id="vc" type="number" value="1" inputmode="numeric"><small class="fe" id="ve"></small></label></div>
+</div>
+
+<details class="sc" open><summary class="sh"><b>Tampilan dan perilaku</b></summary>
+<label>URL WebView<input id="url" type="url" placeholder="kosong = layar teks" autocapitalize="off"></label>
+<div class="g2c"><label>Orientasi<select id="ori"><option value="unspecified">Bebas</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label><label>Warna tema<input id="col" type="color" value="#ffd600"></label></div>
+<label class="sw"><span>Layar penuh</span><input type="checkbox" id="fs"></label>
+<div class="sw"><span>Warna status bar</span><input id="sc" type="color" value="#ffd600"><input type="checkbox" id="scb"></div>
+<label class="sw"><span>Tarik untuk muat ulang</span><input type="checkbox" id="pt"></label><label class="sw"><span>Halaman offline</span><input type="checkbox" id="of"></label><label class="sw"><span>Tautan luar dibuka di browser</span><input type="checkbox" id="ex"></label><label class="sw"><span>Izinkan zoom</span><input type="checkbox" id="zm"></label><label class="sw"><span>Layar tetap menyala</span><input type="checkbox" id="kp"></label><label class="sw"><span>Mode kiosk</span><input type="checkbox" id="ki"></label>
+<label style="margin-top:10px">User agent<input id="ua" placeholder="bawaan" autocapitalize="off"></label>
+</details>
+
+<details class="sc"><summary class="sh"><b>Izin</b></summary>
+<label class="sw"><span>Internet</span><input class="pm" type="checkbox" value="internet" checked></label><label class="sw"><span>Kamera</span><input class="pm" type="checkbox" value="camera"></label><label class="sw"><span>Penyimpanan</span><input class="pm" type="checkbox" value="storage"></label><label class="sw"><span>Lokasi</span><input class="pm" type="checkbox" value="location"></label><label class="sw"><span>Notifikasi</span><input class="pm" type="checkbox" value="notifications"></label>
+</details>
+
+<details class="sc"><summary class="sh"><b>Build dan rilis</b></summary>
+<div class="g2c"><label>Format<select id="fmt"><option value="apk">APK</option><option value="aab">AAB</option><option value="both">APK + AAB</option></select></label><label>Varian<select id="var"><option value="release">Release</option><option value="debug">Debug</option></select></label></div>
+<div class="g2c"><label>minSdk (min 26)<input id="min" type="number" value="26" inputmode="numeric"></label><label>Nama file<input id="out" placeholder="otomatis" autocapitalize="off"></label></div>
+<label class="sw"><span>R8 minify dan shrink</span><input type="checkbox" id="mf"></label><label class="sw"><span>APK per ABI</span><input type="checkbox" id="abi"></label><label class="sw"><span>versionCode naik otomatis</span><input type="checkbox" id="ai" checked></label><label class="sw"><span>google-services.json dummy</span><input type="checkbox" id="fb"></label>
+<label class="sw" id="ovw"><span>Terapkan identitas ke proyek</span><input type="checkbox" id="ov" checked></label>
+<label style="margin-top:10px">Argumen Gradle<input id="ar" placeholder="--warning-mode all" autocapitalize="off"></label>
+<label>Flavors<input id="fl" placeholder="free,pro" autocapitalize="off"></label>
+<label>BuildConfig fields<textarea id="bc" rows="2" placeholder="API_URL=https://contoh.com" autocapitalize="off"></textarea></label>
+<label>Catatan rilis<input id="nt" placeholder="masuk ke GitHub Release"></label>
+<div class="g2c"><label>Preset<select id="ps"></select></label><label>&nbsp;<button class="btn w" id="psv">Simpan</button></label></div>
+<div class="g2c" style="margin-top:8px"><button class="btn w" id="ex">Ekspor JSON</button><label class="btn w" style="margin:0;cursor:pointer">Impor JSON<input id="im2" type="file" accept=".json" hidden></label></div>
+</details>
+
+<details class="sc"><summary class="sh"><b>Ikon</b></summary>
+<label>Ikon aplikasi (PNG)<input id="ic" type="file" accept="image/png"></label><p id="im"></p>
+</details>
+
+<details class="sc"><summary class="sh"><b>Penandatanganan</b></summary>
+<p>Kosongkan untuk keystore otomatis.</p>
+<label>File keystore<input id="ksf" type="file" accept=".jks,.keystore,.p12"></label>
+<div class="g2c"><label>Password<input id="ksp" type="password" autocomplete="off"></label><label>Alias<input id="kal" value="key" autocapitalize="off"></label></div>
+<button class="btn w" id="ksb">Simpan ke repo build</button><p id="ksm" style="margin-top:8px"></p>
+</details>
+
+<button class="btn" id="go">Build</button>
+<p id="bm" style="margin-top:8px"></p>
+
+<div class="term" id="term">
+<div class="th"><div class="pc"><b id="pct" data-v="0">0</b><span>%</span></div>
+<div class="tx"><span id="tt2" role="status" aria-live="polite">Menunggu build dimulai</span><em id="el">00:00</em></div>
+<button class="sq" id="mm" aria-label="Menu konsol" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 5h.01M12 12h.01M12 19h.01" stroke-width="4"/></svg></button></div>
+<div class="menu" id="mu" hidden>
+<button id="cp">Salin log</button><button id="dt">Unduh .txt</button><button id="as" aria-pressed="true">Auto-scroll</button>
+<div class="mf"><button data-f="" aria-pressed="true">Semua</button><button data-f="w" aria-pressed="false">Peringatan</button><button data-f="e" aria-pressed="false">Error</button></div>
+<input id="sq" placeholder="Cari log" aria-label="Cari log"><button id="cn">Batalkan build</button></div>
+<div class="pbar"><i id="pf"></i></div>
+<div id="hn"></div>
+<div id="tb"><div id="nl"></div><details id="lgd" hidden><summary>Log lengkap</summary><div id="gl"></div></details></div>
+</div>
+<div id="rs"></div>
+</section>
+<section id="v-hist" hidden>
+<h1>Riwayat</h1>
+<div class="row"><input id="hq" placeholder="Cari nama" aria-label="Cari"><select id="hf" aria-label="Filter status"><option value="">Semua</option><option value="success">Berhasil</option><option value="failure">Gagal</option><option value="cancelled">Dibatalkan</option></select></div>
+<div id="hl"></div>
+</section>
+</main>
+
+<nav id="nav">
+<button data-t="0" aria-label="Beranda"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg><span>Beranda</span></button>
+<button data-t="1" aria-label="Build"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9z"/></svg><span>Build</span></button>
+<button data-t="2" aria-label="Riwayat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Riwayat</span></button>
+</nav>
+
+<div id="sc"></div>
+<aside id="dr" aria-label="Koneksi GitHub" aria-hidden="true">
+<div class="dh"><h2>Koneksi GitHub</h2><button class="sq" id="dx" aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div>
+<div class="card" id="ds"></div>
+<label>Personal access token<div class="pw"><input id="tk" type="password" autocomplete="off" autocapitalize="off"><button class="sq" id="te" aria-label="Tampilkan token"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
+<div class="row"><label>Username template<input id="tu" value="buildernexa" autocapitalize="off" autocomplete="off"></label><label>Nama repo<input id="tr" value="apk-template" autocapitalize="off" autocomplete="off"></label></div>
+<div class="stack"><button class="btn" id="lb">Hubungkan</button>
+<div class="row" style="margin:0"><button class="btn w" id="tt">Tes koneksi</button><button class="btn w" id="lo">Putuskan</button></div></div>
+<button class="btn w" id="ib" hidden>Instal aplikasi</button>
+<p id="lm"></p>
+<details><summary>Cara membuat token</summary>
+<ol><li>GitHub, Settings, Developer settings, Personal access tokens (classic).</li><li>Generate token baru, centang <b>repo</b> dan <b>workflow</b>.</li><li>Salin token lalu tempel di atas.</li></ol></details>
+</aside>
+<div id="dp" hidden></div>
+<div id="ts" role="status" aria-live="polite"></div>
+
+<script>
+const $=s=>document.querySelector(s),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S=ld("s",{}),H=ld("h",[]),PR=ld("p",{}),P={},run=null,busy=false,stp="",lg="";
+const LAB={success:"Berhasil",failure:"Gagal",running:"Berjalan",cancelled:"Dibatalkan"},lab=s=>LAB[s]||"Terputus";
+const IC={home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',gauge:'<path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/>',wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01"/>',layers:'<path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/>',run:'<path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/>',check:'<path d="M4 12l5 5 11-11"/>',plus:'<path d="M12 5v14M5 12h14"/>',redo:'<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/>',hist:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/>'};
+const ic=n=>`<svg viewBox="0 0 24 24">${IC[n]}</svg>`;
+let tab=0,tt,ANIM=true,PL={};
+function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600)}
+
+async function api(p,o={}){
+ const h={Authorization:"Bearer "+S.t,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"};
+ if(o.body)h["Content-Type"]="application/json";
+ const r=await fetch("https://api.github.com"+p,{...o,headers:h});
+ if(r.status===401)throw Error("Token salah atau sudah kedaluwarsa.");
+ if(r.status===403&&r.headers.get("x-ratelimit-remaining")==="0")throw Error("Batas API GitHub habis. Coba lagi setelah reset.");
+ if(!r.ok){let m="";try{m=(await r.json()).message}catch{}throw Error(r.status+" "+m)}
+ return o.raw?r:r.status===204?null:r.json();
+}
+function scopes(r){
+ const s=r.headers.get("x-oauth-scopes");if(s===null)return;
+ const have=s.split(",").map(x=>x.trim()),miss=["repo","workflow"].filter(x=>!have.includes(x));
+ if(miss.length)throw Error("Scope kurang: "+miss.join(", ")+". Buat ulang token dengan scope tersebut.");
+}
+
+/* drawer */
+function drawer(o){document.body.classList.toggle("open",o);$("#dr").setAttribute("aria-hidden",!o);if(o)ui()}
+function ui(){
+ $("#ds").innerHTML=S.t?`<span class="tag success">Terhubung</span><p style="margin:8px 0 0">${esc(S.u)}<br>${esc(S.r)}</p>`:`<span class="tag">Belum terhubung</span>`;
+ if(S.tp&&!$("#tu").dataset.s){const q=S.tp.split("/");$("#tu").value=q[0];$("#tr").value=q[1]||"";$("#tu").dataset.s=1}
+ $("#tk").placeholder=S.t?"Tersimpan di perangkat":"ghp_...";
+ $("#lo").disabled=$("#tt").disabled=!S.t;
+}
+async function connect(){
+ const t=$("#tk").value.trim()||S.t,tp=$("#tu").value.trim()+"/"+$("#tr").value.trim(),m=$("#lm"),b=$("#lb");
+ if(!t||!/^[\w.-]+\/[\w.-]+$/.test(tp)){m.textContent="Isi token dan repo template (username/repo).";return}
+ b.disabled=true;const old=S;S={...S,t,tp};
+ try{
+  m.textContent="1/3 Memeriksa token...";
+  const r=await api("/user",{raw:true});scopes(r);const u=await r.json();
+  S.u=u.login;S.r=u.login+"/apk-builder";
+  try{await api("/repos/"+S.r)}catch(e){
+   if(!/^404/.test(e.message))throw e;
+   m.textContent="2/3 Membuat repo dari template...";
+   try{await api(`/repos/${tp}/generate`,{method:"POST",body:JSON.stringify({owner:u.login,name:"apk-builder",private:false})})}
+   catch(e2){throw Error(/^404/.test(e2.message)?"Repo template tidak ditemukan atau belum ditandai Template.":e2.message)}
+   m.textContent="3/3 Menunggu workflow siap...";
+   for(let i=0;i<15;i++){await sleep(2000);try{await api(`/repos/${S.r}/contents/.github/workflows/build.yml`);break}catch{}}
+  }
+  sv("s",S);$("#tk").value="";m.textContent="";toast("Terhubung ke GitHub");drawer(false);loadProfile();checkTpl();
+ }catch(e){S=old;m.textContent=e.message}
+ b.disabled=false;ui();
+}
+async function test(){
+ const m=$("#lm");m.textContent="Menguji koneksi...";
+ try{const r=await api("/user",{raw:true});scopes(r);await api("/repos/"+S.r);m.textContent="";toast("Koneksi baik")}
+ catch(e){m.textContent=e.message}
+}
+function disc(){S={vc:S.vc};localStorage.setItem("s",JSON.stringify(S));P={};ui();home();toast("Koneksi diputus")}
+
+/* home */
+async function loadProfile(){
+ if(!S.t)return home();
+ P.loading=!P.name;home();
+ const [u,r,l]=await Promise.allSettled([api("/user"),api("/repos/"+S.r),api("/rate_limit")]);
+ P.ok=u.status==="fulfilled"||l.status==="fulfilled";
+ if(u.status==="fulfilled"){const v=u.value;P.name=v.name||v.login;P.email=v.email||v.login;P.av=v.avatar_url;P.plan=v.plan?.name||"free"}else toast(u.reason.message);
+ if(r.status==="fulfilled")P.priv=r.value.private;
+ if(l.status==="fulfilled")P.rate=l.value.resources.core;
+ if(!P.name)P.name=S.u;P.loading=false;home();
+}
+function avatar(){P.av=(P.av||"").split("&t=")[0];loadProfile().then(()=>{P.av+="&t="+Date.now();home();toast("Avatar diperbarui")})}
+/* === WIDGET BERANDA ===
+   Tiap widget = fungsi yang mengembalikan satu elemen HTML.
+   Urutan di WIDGETS = urutan tampil. Untuk ide sendiri: buat fungsi baru, lalu tambahkan ke array. */
+const WIDGETS=[wFrame,wNext,wPipeline,wActions,wActivity,wRecent];
+function home(){
+ const el=$("#v-home");
+ if(!S.t){el.className="";el.innerHTML=`<div class="card"><b style="font-size:17px">Belum terhubung ke GitHub</b><p style="margin:6px 0 12px">Hubungkan akun untuk mulai build.</p><button class="btn" onclick="drawer(true)">Hubungkan GitHub</button></div>`;return}
+ if(P.loading||!P.name){el.className="";el.innerHTML=`<div class="card sk" style="height:150px"></div><div class="row"><div class="card sk" style="height:110px"></div><div class="card sk" style="height:110px"></div></div>`;return}
+ el.className=ANIM?"pop":"";ANIM=false;
+ el.innerHTML=WIDGETS.map(f=>f()).join("");
+ stats();plRender();tick();
+}
+function wProfile(){return `<div class="card pf"><div class="top"><div class="av"><img src="${esc(P.av)}" alt=""><button class="cam" onclick="avatar()" aria-label="Perbarui avatar">${ic("cam")}</button></div>
+ <div class="who"><span class="note">Halo,</span><b class="ell">${esc(P.name||S.u)}</b><span class="note ell">${esc(P.email||S.u)}</span></div>
+ <div class="clk"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="#fff"/><line id="hh" x1="24" y1="24" x2="24" y2="14" stroke-width="3"/><line id="hm" x1="24" y1="24" x2="24" y2="8"/></svg><span class="tag" id="tm"></span><span class="tag" id="dt"></span></div></div>
+ <div class="chips"><span class="tag">${esc((P.plan||"free").replace(/^./,c=>c.toUpperCase()))}</span><span class="tag">${P.priv?"Private":"Public"}</span></div></div>`}
+function wInfo(){
+ const rt=P.rate,pc=rt?Math.round(rt.remaining/rt.limit*100):0,on=navigator.onLine&&P.ok;
+ return `<div class="row2"><div class="card it"><div class="ib">${ic("gauge")}</div><div class="tt"><b>Kuota API</b><span class="note">${rt?rt.remaining+" / "+rt.limit:"-"}</span><div class="bar"><i style="width:${pc}%"></i></div></div></div>
+ <div class="card it"><div class="ib">${ic("wifi")}</div><div class="tt"><b>${on?"Online":"Offline"}</b><span class="note ell">${esc(S.r)}</span></div></div></div>`}
+function wFrame(){return `<div class="fr">${wProfile()}${wInfo()}${wStats()}</div>`}
+function wStats(){return `<div class="g3"><div class="card"><div class="ib">${ic("layers")}</div><b id="s1"></b><span class="note">Total</span><span class="tag">Semua</span></div>
+ <div class="card"><div class="ib">${ic("run")}</div><b id="s2"></b><span class="note">Berjalan</span><span class="tag success" id="lv">Live</span></div>
+ <div class="card"><div class="ib">${ic("check")}</div><b id="s3"></b><span class="note">Berhasil</span><span class="tag" id="b3"></span></div></div>`}
+function wPipeline(){return `<div class="card"><div class="wh"><h2>Pipeline</h2><span class="tag" id="pls"></span></div><div class="pl" id="pl"></div></div>`}
+function wActions(){return `<div class="g2"><button class="qa" onclick="go(1)"><span class="ib">${ic("plus")}</span>Build baru</button>
+ <button class="qa" onclick="again(0);toast('Konfigurasi dimuat')" ${H.length?"":"disabled"}><span class="ib">${ic("redo")}</span>Ulangi terakhir</button>
+ <button class="qa" onclick="go(2)"><span class="ib">${ic("hist")}</span>Riwayat</button>
+ <a class="qa" href="https://github.com/${esc(S.r)}" target="_blank" rel="noopener"><span class="ib">${ic("ext")}</span>Buka repo</a></div>`}
+function wActivity(){
+ const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);return d});
+ const n=days.map(d=>H.filter(h=>new Date(h.t).toDateString()===d.toDateString()).length),mx=Math.max(1,...n);
+ return `<div class="card"><div class="wh"><h2>Aktivitas</h2><span class="tag">7 hari</span></div><div class="ch">${days.map((d,i)=>`<div class="cb"><b>${n[i]||""}</b><i style="height:${Math.max(4,Math.round(n[i]/mx*64))}px${i===6?";background:var(--ac)":""}"></i><span>${d.toLocaleDateString("id-ID",{weekday:"short"})}</span></div>`).join("")}</div></div>`}
+function wRecent(){return `<div class="card"><div class="wh"><h2>Build terakhir</h2></div>${H.length?H.slice(0,3).map(h=>`<div class="li"><span class="ell">${esc(h.name)} ${esc(h.vn)}</span><span class="tag ${h.st}">${lab(h.st)}</span></div>`).join(""):"<p style='margin:0'>Belum ada build. Mulai dari Build baru.</p>"}</div>`}
+const PS=[["Setup Java","Java"],["Setup Gradle","Gradle"],["Generate project","Gen"],["Build","Build"],["Collect output","Hasil"],["Release","Rilis"]];
+function plRender(){
+ const e=$("#pl");if(!e)return;
+ e.innerHTML=PS.map(([n,l])=>{const v=PL[n],c=v==="success"?"ok":v==="in_progress"?"on":v==="failure"?"er":"";return `<div class="ps ${c}"><i>${c==="ok"?"OK":c==="er"?"!":""}</i><span>${l}</span></div>`}).join("");
+ $("#pls").textContent=busy?"Berjalan":Object.values(PL).includes("failure")?"Gagal":Object.keys(PL).length?"Selesai":"Siap";
+}
+function stats(){
+ const t=H.length,ok=H.filter(h=>h.st==="success").length,s=(i,v)=>{const e=$("#"+i);if(e)/^\d+$/.test(v)?cu(e,+v):e.textContent=v};
+ s("s1",t);s("s2",busy?1:0);s("s3",ok);s("b3",(t?Math.round(ok/t*100):0)+"%");const lv=$("#lv");if(lv)lv.classList.toggle("live",busy);
+}
+function tick(){
+ const d=new Date(),h=$("#hh");if(!h)return;
+ h.setAttribute("transform",`rotate(${(d.getHours()%12+d.getMinutes()/60)*30} 24 24)`);
+ $("#hm").setAttribute("transform",`rotate(${d.getMinutes()*6} 24 24)`);
+ $("#tm").textContent=d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",timeZoneName:"short"});const dt=$("#dt");if(dt)dt.textContent=d.toLocaleDateString("id-ID",{day:"numeric",month:"short"});
+}
+
+/* nav */
+function go(n){
+ tab=n;["#v-home","#v-build","#v-hist"].forEach((s,i)=>{const e=$(s);e.hidden=i!==n;if(i===n){e.classList.remove("in");void e.offsetWidth;e.classList.add("in")}});
+ document.querySelectorAll("nav button").forEach(b=>{const on=+b.dataset.t===n;on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
+ if(n===0){ANIM=true;home()}if(n===1){queue();checkTpl()}if(n===2)hist();scrollTo(0,0);
+}
+
+/* history */
+function hist(){
+ const q=$("#hq").value.trim().toLowerCase(),f=$("#hf").value;
+ const rows=H.map((h,i)=>({h,i})).filter(({h})=>(!f||h.st===f)&&(!q||h.name.toLowerCase().includes(q))).sort((a,b)=>!!b.h.pin-!!a.h.pin);
+ $("#hl").innerHTML=cmpHtml()+(rows.length?rows.map(({h,i})=>`<div class="card"><b style="font-size:16px">${esc(h.name)}</b> <span class="tag ${h.st}">${lab(h.st)}</span>${h.pin?' <span class="tag">Disematkan</span>':""}
+ <p style="margin:6px 0 10px">v${esc(h.vn)} (${h.vc}) &middot; ${new Date(h.t).toLocaleString("id-ID",{dateStyle:"short",timeStyle:"short"})}${h.dur!=null?" &middot; "+h.dur+" dtk":""}</p>
+ <div class="stack" style="margin:0">${(h.assets||[]).map((a,j)=>`<button class="btn" onclick="dl(${i},${j})">Unduh ${esc(a.n)}</button>`).join("")}${h.sum?`<button class="btn w" onclick="share(${i})">Bagikan</button><div>${kv(h)}</div>`:h.hint?`<p style="margin:0">${esc(h.hint)}</p>`:""}
+ <div class="row" style="margin:0"><button class="btn w" onclick="again(${i})">Ulangi</button><button class="btn w" onclick="pin(${i})">${h.pin?"Lepas":"Sematkan"}</button><button class="btn w" onclick="del(${i})">Hapus</button></div><div class="row" style="margin:0"><button class="btn w" onclick="cmpT(${i})">${CMP.includes(i)?"Batal banding":"Bandingkan"}</button></div></div></div>`).join(""):`<p>${H.length?"Tidak ada hasil.":"Belum ada build. Mulai dari tab Build."}</p>`);
+}
+async function del(i){
+ if(!confirm("Hapus build ini? Release dan filenya di GitHub ikut dihapus."))return;
+ const h=H[i];
+ if(h.relid&&S.t)try{await api(`/repos/${S.r}/releases/${h.relid}`,{method:"DELETE"});if(h.tag)await api(`/repos/${S.r}/git/refs/tags/${h.tag}`,{method:"DELETE"})}catch(e){toast("Release tidak terhapus: "+e.message)}
+ H.splice(i,1);sv("h",H);hist();toast("Riwayat dihapus");
+}
+function fill(c){
+ const g=x=>$("#"+x);
+ g("name").value=c.name;g("pkg").value=c.pkg;g("vn").value=c.vn;g("vc").value=c.vc;g("min").value=c.min;g("fmt").value=c.fmt;g("var").value=c.var;
+ g("mf").checked=c.minify;g("abi").checked=c.abi;g("ori").value=c.orient;g("url").value=c.url;g("col").value=c.color;g("fb").checked=c.fb;g("out").value=c.out;g("ar").value=c.args;g("nt").value=c.notes||"";g("fl").value=c.flv||"";g("bc").value=c.bc||"";g("ki").checked=!!c.kiosk;g("fs").checked=!!c.fs;g("kp").checked=!!c.kp;g("zm").checked=!!c.zm;g("ex").checked=!!c.ex;g("of").checked=!!c.of;g("pt").checked=!!c.pt;g("scb").checked=!!c.sc;if(c.sc)g("sc").value=c.sc;g("ua").value=c.ua||"";g("su").value=c.src||"";g("rf").value=c.ref||"";g("sb").value=c.sub||"";g("ov").checked=c.ov!==false;setSrc(c.sr==="zip"?"zip":c.sr==="repo"||c.sr==="ziplink"||c.site?"url":"scratch");if(c.site)$("#su").value=c.url;auUI();
+ document.querySelectorAll(".pm").forEach(x=>x.checked=c.perms.includes(x.value));
+}
+function again(i){fill(H[i].cfg);go(1)}
+
+/* build */
+function cfg(dry){
+ const g=i=>$("#"+i),n=g("name").value.trim();
+ if(!n)throw Error("Nama aplikasi wajib diisi.");
+ if(g("sr").value==="url"&&!g("su").value.trim())throw Error("Isi URL target dulu.");
+ if(!g("sr").value)throw Error("Pilih sumber proyek dulu.");
+ if(g("sr").value==="zip"&&!PF)throw Error("Pilih file ZIP atau HTML dulu.");
+ const slug=n.toLowerCase().replace(/[^a-z0-9]/g,"");
+ const pkg=g("pkg").value.trim()||"com.app."+(/^[a-z]/.test(slug)?slug:"a"+slug);
+ if(!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(pkg))throw Error("Package name tidak valid. Contoh: com.contoh.app");
+ let vc=+g("vc").value||1;
+ if(!dry){if(g("ai").checked)vc=Math.max(vc,(S.vc||0)+1);g("vc").value=vc;S.vc=vc;sv("s",S)}
+ return{name:n,pkg,vn:g("vn").value.trim()||"1.0.0",vc,min:+g("min").value||26,fmt:g("fmt").value,var:g("var").value,minify:g("mf").checked,abi:g("abi").checked,orient:g("ori").value,perms:[...document.querySelectorAll(".pm:checked")].map(x=>x.value),url:g("url").value.trim(),color:g("col").value,fb:g("fb").checked,out:g("out").value.trim().replace(/[^\w.-]/g,"")||slug||"app",args:g("ar").value.trim(),notes:g("nt").value.trim(),flv:g("fl").value.trim(),bc:g("bc").value.trim(),kiosk:g("ki").checked,ref:g("rf").value.trim(),sub:g("sb").value.trim(),ov:g("ov").checked,ps:AUTO.pkg===undefined?!!g("pkg").value.trim():g("pkg").value.trim()!==AUTO.pkg,kind:effKind()==="site"?"":effKind(),fs:g("fs").checked,kp:g("kp").checked,zm:g("zm").checked,ex:g("ex").checked,of:g("of").checked,pt:g("pt").checked,sc:g("scb").checked?g("sc").value:"",ua:g("ua").value.trim(),...srMap()};
+}
+const KEY=["Set up job","Run actions/checkout","Prepare source","Setup Java","Setup Node","Setup Flutter","Setup Gradle","Generate project","Build","Collect output","Upload artifact","Release"];
+const NR={"Set up job":["Menyiapkan ruang kerja","Ruang kerja siap"],"Run actions/checkout":["Mengambil kode","Kode siap"],"Prepare source":["Membaca sumber proyekmu","Sumber proyek dikenali"],"Setup Java":["Menyalakan Java 17","Java 17 siap"],"Setup Node":["Menyiapkan Node.js","Node.js siap"],"Setup Flutter":["Menyiapkan Flutter","Flutter siap"],"Setup Gradle":["Menyiapkan Gradle","Gradle siap"],"Generate project":["Merakit proyek dari konfigurasimu","Proyek, ikon, dan kunci tanda tangan siap"],"Build":["Mengompilasi aplikasi, tahap terlama","Aplikasi berhasil dikompilasi"],"Collect output":["Menandatangani aplikasi","Aplikasi ditandatangani, SHA-256 dihitung"],"Upload artifact":["Mengemas hasil","Hasil dikemas"],"Release":["Menerbitkan ke Releases","Diterbitkan ke Releases"]};
+const WD={"Set up job":5,"Run actions/checkout":3,"Prepare source":8,"Setup Java":5,"Setup Node":8,"Setup Flutter":60,"Setup Gradle":10,"Generate project":10,"Build":150,"Collect output":12,"Upload artifact":6,"Release":8};
+const key=n=>KEY.find(k=>n.startsWith(k));
+let T={as:true,f:"",lf:0},DL=null,tmr=null;
+const fmtT=x=>{x=Math.max(0,Math.round(x));return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0")};
+const sc=x=>!x?"":x.status==="in_progress"?"on":x.status!=="completed"?"":x.conclusion==="success"?"ok":x.conclusion==="skipped"?"":"er";
+const cls=x=>/BUILD SUCCESSFUL/.test(x)?"s":/##\[error\]|\berror\b|FAILED|Exception/i.test(x)?"e":/##\[warning\]|\bwarning\b|deprecated/i.test(x)?"w":"";
+const HINT=[[/namespace|package|applicationId/i,"Package name atau namespace tidak valid. Gunakan huruf kecil, contoh com.contoh.app."],[/minSdk|compileSdk|SDK|platform/i,"Versi SDK tidak cocok. Naikkan minSdk (minimal 26)."],[/R8|minify|proguard|missing class/i,"R8 gagal memproses kode. Matikan R8 minify di Opsi lanjutan."],[/keystore|\.jks|alias|password/i,"Keystore atau password tidak cocok. Hapus secrets KEYSTORE_B64 agar keystore dibuat otomatis."],[/Unsupported class file|source option|JDK|Java version/i,"Versi Java proyek tidak cocok (runner memakai Java 17). Proyek lama mungkin perlu AGP 8 atau lebih baru."],[/resolve|timeout|network|connection/i,"Gagal mengunduh dependensi. Jalankan ulang build."]];
+const wt=k=>{const a=H.map(h=>h.sd&&h.sd[k]).filter(Boolean);return a.length?a.reduce((x,y)=>x+y)/a.length:WD[k]};
+const by=k=>(T.steps||[]).find(x=>key(x.name)===k);
+const rows=()=>KEY.filter(k=>{const x=by(k);return!(x&&x.conclusion==="skipped")&&!(!x&&T.c&&T.c.sr==="scratch"&&(k==="Setup Node"||k==="Setup Flutter"))});
+function pctNow(){
+ if(T.fin)return T.ok?100:T.pct||0;
+ if(!T.steps.length)return T.zip?Math.round((T.up||0)*8):0;
+ let tot=0,got=0;
+ rows().forEach(k=>{const w=wt(k),x=by(k);tot+=w;if(!x)return;if(x.conclusion==="success")got+=w;else if(x.status==="in_progress"&&x.started_at)got+=w*Math.min(.95,Math.max(0,(Date.now()-Date.parse(x.started_at))/1000)/w)});
+ const f=tot?got/tot:0;return Math.min(99,Math.round(T.zip?8+92*f:f*100));
+}
+function line(id,txt,c,tm){
+ let e=document.getElementById(id);
+ if(!e){e=document.createElement("div");e.id=id;e.innerHTML="<i></i><span></span><em></em>";$("#nl").appendChild(e)}
+ const k="nl "+c;if(e.className!==k)e.className=k;
+ if(e.children[1].textContent!==txt)e.children[1].textContent=txt;
+ e.children[2].textContent=tm||"";
+}
+function termDraw(){
+ if(!T.t0)return;
+ const p=Math.max(T.pct||0,pctNow());T.pct=p;
+ const pe=$("#pct");if(Math.abs(p-(+pe.dataset.v||0))>2)cu(pe,p);else{pe.dataset.v=p;pe.textContent=p}
+ $("#pf").style.width=p+"%";$("#pf").style.borderRightWidth=p?"2px":"0";
+ $("#el").textContent=fmtT(T.fin?(T.dur||0):(Date.now()-T.t0)/1000);
+ if(!T.dsp&&!T.zip)line("p0","Mengirim permintaan ke GitHub","on");
+ if(T.dsp){line("p0","Permintaan terkirim ke GitHub","ok");line("p2",T.steps.length?"Runner tersedia":"Menunggu runner tersedia",T.steps.length?"ok":"on")}
+ let cur=T.dsp?"Menunggu runner tersedia":T.zip&&(T.up||0)<1?"Mengunggah ZIP":"Mengirim permintaan";
+ T.steps.forEach(x=>{
+  const k=key(x.name),c=sc(x);if(!k||!c)return;
+  let t=c==="ok"?NR[k][1]:NR[k][0];
+  if(c==="on"){if(k==="Build"&&T.task)t+=" · "+T.task;cur=t}
+  if(c==="er")t=NR[k][0]+" (gagal)";
+  line("n_"+k,t,c,x.started_at?Math.max(0,Math.round(((x.completed_at?Date.parse(x.completed_at):Date.now())-Date.parse(x.started_at))/1000))+" dtk":"");
+ });
+ if(T.fin){cur=T.ok?"Selesai":T.cx?"Dibatalkan":"Gagal";line("fin",T.ok?"Selesai. Aplikasimu siap diunduh.":T.cx?"Build dibatalkan.":"Build berhenti. Penyebabnya ada di bagian atas.",T.ok?"ok":"er")}
+ const te=$("#tt2");if(te.textContent!==cur)te.textContent=cur;
+}
+function parseLog(t){
+ const gs=[];let g={n:"Log",l:[]};gs.push(g);
+ t.split("\n").forEach(x=>{x=x.replace(/^\S+Z /,"");const m=x.match(/^##\[group\](.*)/);if(m){g={n:m[1],l:[]};gs.push(g);return}if(x.startsWith("##[endgroup]")){g={n:"Log",l:[]};gs.push(g);return}g.l.push(x)});
+ return gs.filter(g=>g.l.some(l=>l.trim()));
+}
+function logApply(){
+ if(!T.log)return;
+ const gs=parseLog(T.log),box=$("#gl"),sb=$("#tb"),q=($("#sq").value||"").toLowerCase();
+ const nb=sb.scrollHeight-sb.scrollTop-sb.clientHeight<48;
+ $("#lgd").hidden=false;let base=0;
+ gs.forEach((g,i)=>{
+  let d=document.getElementById("g"+i);
+  if(!d){d=document.createElement("details");d.id="g"+i;d.dataset.n=0;d.innerHTML="<summary></summary><pre></pre>";d.firstChild.onclick=()=>{d.dataset.u=1};if(i===gs.length-1)d.open=true;box.appendChild(d)}
+  const n=+d.dataset.n,pre=d.lastChild;
+  if(g.l.length>n&&n<1500){
+   const add=g.l.slice(n,1500);
+   pre.insertAdjacentHTML("beforeend",add.map((x,j)=>{const c=cls(x),v=(!T.f||c===T.f)&&(!q||x.toLowerCase().includes(q));return `<span class="ll L${c}" data-c="${c}"${v?"":" hidden"}><span class="ln">${base+n+j+1}</span>${esc(x)}</span>`}).join(""));
+   d.dataset.n=n+add.length;
+   if(add.some(x=>cls(x)==="e")&&!d.dataset.u)d.open=true;
+  }
+  const er=!!d.querySelector(".Le"),sm=d.firstChild,h=esc(g.n)+'<span class="tag">'+g.l.length+"</span>"+(er?'<span class="tag">Error</span>':"");
+  if(sm.dataset.h!==h){sm.innerHTML=h;sm.dataset.h=h}
+  base+=g.l.length;
+ });
+ if(T.as&&nb)sb.scrollTop=sb.scrollHeight;
+}
+function filt(){
+ const q=($("#sq").value||"").toLowerCase(),on=!!(T.f||q);
+ document.querySelectorAll("#gl details").forEach(d=>{let n=0;d.querySelectorAll(".ll").forEach(l=>{const v=(!T.f||l.dataset.c===T.f)&&(!q||l.textContent.toLowerCase().includes(q));l.hidden=!v;if(v)n++});d.hidden=on&&!n;if(on&&n&&!d.dataset.u)d.open=true});
+}
+const logDraw=()=>{logApply();filt()};
+const termTxt=()=>(T.steps||[]).map(x=>`[${x.conclusion||x.status}] ${x.name}`).join("\n")+"\n\n"+(T.log||"");
+function pin(i){H[i].pin=!H[i].pin;sv("h",H);hist()}
+function upZip(f){
+ return new Promise((ok,no)=>{
+  if(f.size>50*1048576)return no(Error("ZIP lebih dari 50 MB. Gunakan opsi repo GitHub untuk proyek besar."));
+  const path=`uploads/${Date.now()}.zip`,rd=new FileReader();
+  rd.onerror=()=>no(Error("Gagal membaca file ZIP."));
+  rd.onload=()=>{
+   const x=new XMLHttpRequest(),t0=performance.now();
+   x.open("PUT",`https://api.github.com/repos/${S.r}/contents/${path}`);
+   x.setRequestHeader("Authorization","Bearer "+S.t);x.setRequestHeader("Accept","application/vnd.github+json");x.setRequestHeader("Content-Type","application/json");
+   x.upload.onprogress=e=>{if(!e.lengthComputable)return;T.up=e.loaded/e.total;const sz=T.up*f.size,sp=sz/((performance.now()-t0)/1000||1);line("up",`Mengunggah ZIP · ${Math.round(T.up*100)}% · ${(sz/1048576).toFixed(1)}/${(f.size/1048576).toFixed(1)} MB · ${(sp/1048576).toFixed(1)} MB/s`,"on")};
+   x.onload=()=>{if(x.status<300){T.up=1;line("up","ZIP terunggah ("+(f.size/1048576).toFixed(1)+" MB)","ok");ok(path)}else no(Error("Unggah ZIP gagal ("+x.status+")."))};
+   x.onerror=()=>no(Error("Koneksi terputus saat mengunggah ZIP."));
+   x.send('{"message":"Unggah ZIP","content":"'+rd.result.split(",")[1]+'"}');
+  };
+  rd.readAsDataURL(f);
+ });
+}
+/* ===== alur bertahap, analisis proyek, sinkron template ===== */
+let ST=0,URLOK=false,A=null,AUTO={},PF=null,PFN="",PFSZ=0,FZ=null,TPLOK=null;
+const PMAP={INTERNET:"internet",CAMERA:"camera",READ_EXTERNAL_STORAGE:"storage",WRITE_EXTERNAL_STORAGE:"storage",ACCESS_FINE_LOCATION:"location",ACCESS_COARSE_LOCATION:"location",POST_NOTIFICATIONS:"notifications"};
+const KN={flutter:"Flutter",capacitor:"Capacitor",rn:"React Native / Expo",gradle:"Gradle Android",web:"Web (HTML/JS)",site:"Situs web"};
+const fsz=b=>b>1048576?(b/1048576).toFixed(1)+" MB":Math.max(1,Math.round(b/1024))+" KB";
+const pretty=x=>String(x).replace(/[-_.]+/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+const effKind=()=>A&&A.kind&&A.conf>=70?A.kind:($("#kd").value||(A&&A.kind)||"");
+const loadJSZip=()=>window.JSZip?Promise.resolve():new Promise((ok,no)=>{const x=document.createElement("script");x.src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";x.onload=ok;x.onerror=()=>no(Error("Pembaca ZIP gagal dimuat. Periksa koneksi."));document.head.appendChild(x)});
+function idleDraw(){
+ if(T.t0)return;
+ const sr=$("#sr").value;
+ line("idle",!sr?"Pilih sumber proyek untuk memulai":sr==="scratch"?"Siap membuat aplikasi dasar. Menunggu build dimulai":A||URLOK?"Siap dibuild. Menunggu build dimulai":sr==="zip"?"Menunggu file proyek dipilih":"Menunggu URL dibaca","id");
+}
+function setSrc(v){
+ if($("#sr").value!==v){A=null;PF=null;FZ=null;URLOK=false;AUTO={};$("#an").innerHTML="";$("#kdw").hidden=true;$("#ut").hidden=true;dzUI();auUI()}
+ $("#sr").value=v;document.querySelectorAll("#srcs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
+ $("#szf").hidden=v!=="zip";$("#uf").hidden=v!=="url";$("#sbw").hidden=!v||v==="scratch";$("#rfw").hidden=v!=="url";$("#tplw").hidden=v!=="scratch";$("#ovw").hidden=!v||v==="scratch";
+ if(v==="scratch")$("#an").innerHTML=`<div class="card" style="box-shadow:2px 2px 0 #000"><b>Aplikasi dasar tanpa proyek</b><p style="margin:6px 0 0">Dibuat dari konfigurasi saja: halaman teks, atau WebView bila kamu mengisi URL WebView.</p></div>`;
+ idleDraw();
+}
+function dzUI(){$("#dz").classList.toggle("has",!!PF);$("#dzt").textContent=PF?PFN:"Pilih ZIP atau HTML";$("#dzs").textContent=PF?fsz(PFSZ):"Maks 50 MB";$("#dzx").hidden=!PF;$("#dzb").hidden=!!PF}
+function auUI(){
+ ["name","pkg","vn","vc"].forEach(f=>{const e=document.querySelector(`.au[data-f=${f}]`);if(!e)return;e.innerHTML=AUTO[f]===undefined?"":$("#"+f).value===String(AUTO[f])?"<em>otomatis</em>":`<button type="button" data-r="${f}">Kembalikan</button>`});
+}
+async function analyze(files,read,o={}){
+ const has=f=>files.includes(f),pick=re=>files.find(f=>re.test(f)),R={kind:null,conf:0,meta:{},perms:[],warn:[],rec:[],n:files.length};
+ const rd=async p=>{try{return await read(p)}catch{return ""}},kt=(t,re)=>(t.match(re)||[])[1];
+ if(!files.length){R.warn.push("Proyek kosong atau subfolder salah.");return R}
+ if(o.truncated)R.warn.push("Daftar berkas repo terpotong GitHub. Analisis bisa kurang lengkap.");
+ if(o.priv)R.warn.push("Repo privat. Isi secret SRC_TOKEN di repo apk-builder agar build bisa mengambil kodenya.");
+ let pk={};if(has("package.json")){try{pk=JSON.parse(await rd("package.json"))}catch{R.warn.push("package.json tidak valid.")}}
+ const dp={...pk.dependencies,...pk.devDependencies},cap=pick(/^capacitor\.config\.(ts|json|js)$/),vx=(pk.version||"").match(/^\d+\.\d+\.\d+/);
+ if(has("pubspec.yaml")){
+  const t=await rd("pubspec.yaml"),v=t.match(/^version:\s*(\d+\.\d+\.\d+)(?:\+(\d+))?/m);
+  R.kind="flutter";R.conf=98;R.meta.name=kt(t,/^name:\s*(\S+)/m);if(v){R.meta.vn=v[1];if(v[2])R.meta.vc=+v[2]}
+  if(!files.some(f=>/^android\/app\/build\.gradle/.test(f)))R.warn.push("Folder android belum ada. Dibuat otomatis lewat flutter create saat build.");
+  R.rec.push("Pakai AAB bila akan diunggah ke Play Store.");
+ }else if(cap){
+  const t=await rd(cap);R.kind="capacitor";R.conf=95;R.meta.pkg=kt(t,/appId["']?\s*[:=]\s*["']([^"']+)/);R.meta.name=kt(t,/appName["']?\s*[:=]\s*["']([^"']+)/);if(vx)R.meta.vn=vx[0];
+  if(!has("package.json"))R.warn.push("package.json tidak ditemukan.");
+  if(!files.some(f=>f.startsWith("android/")))R.rec.push("Platform android ditambahkan otomatis lewat npx cap add android.");
+ }else if(dp["react-native"]||dp.expo){
+  R.kind="rn";R.conf=92;R.meta.name=pk.name;if(vx)R.meta.vn=vx[0];
+  try{const j=JSON.parse(await rd("app.json")),x=j.expo||j;R.meta.name=x.name||R.meta.name;R.meta.vn=x.version||R.meta.vn;if(x.android){R.meta.pkg=x.android.package;if(x.android.versionCode)R.meta.vc=x.android.versionCode}}catch{}
+  if(!files.some(f=>f.startsWith("android/"))){if(dp.expo)R.rec.push("Folder android dibuat lewat expo prebuild saat build.");else R.warn.push("Proyek React Native tanpa folder android tidak bisa dibuild.")}
+ }else if(has("gradlew")||has("settings.gradle")||has("settings.gradle.kts")){
+  const ap=pick(/(^|\/)app\/build\.gradle(\.kts)?$/)||pick(/(^|\/)build\.gradle(\.kts)?$/);R.kind="gradle";R.conf=ap?93:75;
+  if(ap){const t=await rd(ap),vc=kt(t,/versionCode\s*=?\s*(\d+)/);R.meta.pkg=kt(t,/applicationId\s*=?\s*["']([^"']+)/);R.meta.vn=kt(t,/versionName\s*=?\s*["']([^"']+)/);if(vc)R.meta.vc=+vc;R.meta.min=kt(t,/minSdk(?:Version)?\s*=?\s*(\d+)/);if(!/com\.android\.application/.test(t))R.warn.push("Modul ini tidak memakai plugin com.android.application.")}
+  const mf=pick(/(^|\/)src\/main\/AndroidManifest\.xml$/);
+  if(mf){const t=await rd(mf);R.perms=[...new Set([...t.matchAll(/uses-permission[^>]*android:name="android\.permission\.(\w+)"/g)].map(x=>PMAP[x[1]]).filter(Boolean))];const o2=kt(t,/screenOrientation="(\w+)"/);if(o2==="portrait"||o2==="landscape")R.meta.orient=o2}
+  const gv=kt(await rd("gradle/wrapper/gradle-wrapper.properties"),/gradle-([\d.]+)/);if(gv&&+gv.split(".")[0]<7)R.warn.push(`Gradle ${gv} terlalu lama untuk Java 17. Perbarui wrapper ke 8.x.`);
+  if(!has("gradlew"))R.warn.push("Tidak ada gradlew. Build memakai Gradle 8.7 dari runner.");
+ }else if(has("package.json")||has("index.html")){
+  const bs=pk.scripts&&pk.scripts.build,idx=has("index.html");
+  R.kind="web";R.conf=bs?90:idx?96:40;R.meta.name=pk.name;if(vx)R.meta.vn=vx[0];R.perms=["internet"];
+  if(!bs&&!idx)R.warn.push("Tidak ada index.html dan tidak ada skrip build. Build web akan gagal.");
+  const wm=pick(/(^|\/)(manifest\.json|manifest\.webmanifest|site\.webmanifest)$/);
+  if(wm)try{const j=JSON.parse(await rd(wm));if(j.name||j.short_name)R.meta.name=j.short_name||j.name;if(j.theme_color)R.meta.color=j.theme_color;if(/portrait|landscape/.test(j.orientation||""))R.meta.orient=/portrait/.test(j.orientation)?"portrait":"landscape"}catch{}
+  if(!R.meta.name&&idx)R.meta.name=kt(await rd("index.html"),/<title>([^<]+)/i);
+  R.rec.push("Web dibundel offline ke dalam APK. Izin internet tetap aktif untuk memanggil API.");
+ }else R.warn.push("Jenis proyek tidak dikenali. Pilih jenis secara manual atau periksa subfolder.");
+ const ic=pick(/(^|\/)(ic_launcher|icon|logo)[^/]*\.png$/i);if(ic)R.icon=ic;
+ return R;
+}
+function anShow(R,nm){
+ A=R;const m=R.meta,ok=R.kind&&R.conf>=70;
+ $("#kdw").hidden=ok;
+ $("#an").innerHTML=`<div class="card"><div class="wh"><h2>Hasil analisis</h2><span class="tag ${ok?"success":""}">${KN[R.kind]||"Tidak dikenali"}${R.kind?" · "+(R.conf>=90?"yakin":R.conf>=70?"cukup yakin":"kurang yakin"):""}</span></div>
+ <dl class="kv">${R.n?`<dt>Berkas</dt><dd>${R.n}</dd>`:""}${m.name?`<dt>Nama</dt><dd>${esc(m.name)}</dd>`:""}${m.pkg?`<dt>Package</dt><dd>${esc(m.pkg)}</dd>`:""}${m.vn?`<dt>Versi</dt><dd>${esc(m.vn)}${m.vc?" ("+m.vc+")":""}</dd>`:""}${m.min?`<dt>minSdk</dt><dd>${esc(m.min)}</dd>`:""}${R.icon?`<dt>Ikon</dt><dd>${esc(R.icon)}</dd>`:""}</dl>
+ ${R.perms.length?`<div class="chips" style="flex-wrap:wrap;margin:0 0 8px">${R.perms.map(x=>`<span class="tag">${x}</span>`).join("")}</div>`:""}
+ ${R.warn.length?`<ul class="wl">${R.warn.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+ ${R.rec.length?`<p style="margin:8px 0 0">${esc(R.rec.join(" "))}</p>`:""}</div>`;
+ if(R.kind)prefill(R,nm);
+ idleDraw();
+}
+function prefill(R,nm){
+ const m=R.meta,base=m.name||nm||"Aplikasiku",slug=String(base).toLowerCase().replace(/[^a-z0-9]/g,""),okp=x=>x&&/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(x);
+ AUTO={name:pretty(base),pkg:okp(m.pkg)?m.pkg:"com.app."+(/^[a-z]/.test(slug)?slug:"a"+slug),vn:m.vn||"1.0.0",vc:m.vc||1};
+ for(const k in AUTO)$("#"+k).value=AUTO[k];
+ if(R.perms.length)document.querySelectorAll(".pm").forEach(x=>x.checked=R.perms.includes(x.value));
+ if(m.orient)$("#ori").value=m.orient;
+ if(/^#[0-9a-f]{6}$/i.test(m.color||""))$("#col").value=m.color.toLowerCase();
+ if(m.min)$("#min").value=Math.max(26,+m.min);
+ $("#url").value=R.url||"";auUI();val();
+}
+async function onFile(f){
+ FZ=f;PFN=f.name;PFSZ=f.size;PF=null;A=null;dzUI();
+ if(f.size>50*1048576){FZ=null;$("#an").innerHTML=`<div class="card"><b>File terlalu besar</b><p style="margin:6px 0 0">Maksimal 50 MB. Untuk proyek besar gunakan URL repo GitHub.</p></div>`;idleDraw();return}
+ $("#an").innerHTML=`<div class="card"><b>Membaca proyek...</b><div class="bar"><i class="ind"></i></div></div>`;
+ try{
+  await loadJSZip();let files,read,nm=f.name.replace(/\.(zip|html?)$/i,"");
+  if(/\.html?$/i.test(f.name)){
+   const txt=await f.text(),z=new JSZip();z.file("index.html",txt);
+   PF=new File([await z.generateAsync({type:"blob"})],"project.zip");files=["index.html"];read=async()=>txt;
+  }else{
+   const z=await JSZip.loadAsync(f);PF=f;
+   const names=Object.keys(z.files).filter(n=>!z.files[n].dir&&!n.startsWith("__MACOSX")&&!/(^|\/)\.git\//.test(n)),tops=new Set(names.map(n=>n.split("/")[0]));
+   const pre=tops.size===1&&names.every(n=>n.includes("/"))?[...tops][0]+"/":"",sub=$("#sb").value.trim().replace(/^\/|\/$/g,""),pp=pre+(sub?sub+"/":"");
+   files=names.filter(n=>n.startsWith(pp)).map(n=>n.slice(pp.length));read=p=>z.file(pp+p).async("string");
+  }
+  anShow(await analyze(files,read),nm);
+ }catch(e){PF=null;$("#an").innerHTML=`<div class="card"><b>Gagal membaca file</b><p style="margin:6px 0 0">${esc(e.message||"ZIP rusak atau tidak didukung.")}</p></div>`}
+ dzUI();idleDraw();
+}
+async function anRepo(){
+ if(!S.t){toast("Hubungkan GitHub dulu");drawer(true);return}
+ const u=$("#su").value.trim(),m=u.match(/^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:\/tree\/([^/]+)(?:\/(.+?))?)?\/?$/);
+ if(!m){$("#an").innerHTML=`<div class="card"><b>URL tidak valid</b><p style="margin:6px 0 0">Gunakan bentuk https://github.com/pemilik/repo</p></div>`;return}
+ const [,o,r,br,sp]=m;A=null;$("#anb").disabled=true;
+ $("#an").innerHTML=`<div class="card"><b>Membaca repo...</b><div class="bar"><i class="ind"></i></div></div>`;
+ try{
+  const info=await api(`/repos/${o}/${r}`),ref=$("#rf").value.trim()||br||info.default_branch;
+  const tr=await api(`/repos/${o}/${r}/git/trees/${encodeURIComponent(ref)}?recursive=1`),sub=($("#sb").value.trim()||sp||"").replace(/^\/|\/$/g,""),pre=sub?sub+"/":"";
+  const files=tr.tree.filter(x=>x.type==="blob"&&x.path.startsWith(pre)).map(x=>x.path.slice(pre.length));
+  const read=async p=>{const q=await fetch(`https://api.github.com/repos/${o}/${r}/contents/${pre}${p}?ref=${encodeURIComponent(ref)}`,{headers:{Authorization:"Bearer "+S.t,Accept:"application/vnd.github.raw+json"}});if(!q.ok)throw Error(q.status);return q.text()};
+  $("#su").value=`https://github.com/${o}/${r}`;$("#sb").value=sub;if(!$("#rf").value&&br)$("#rf").value=br;
+  anShow(await analyze(files,read,{truncated:tr.truncated,priv:info.private}),r);
+ }catch(e){$("#an").innerHTML=`<div class="card"><b>Gagal membaca repo</b><p style="margin:6px 0 0">${esc(e.message)}</p></div>`}
+ $("#anb").disabled=false;idleDraw();
+}
+async function checkTpl(){
+ if(!S.t)return;
+ try{
+  const tp=S.tp||"buildernexa/apk-template",ps=["tools/generate.py",".github/workflows/build.yml"],ok=t=>/NEXA_TPL = 5/.test(t);
+  const g=async(r,p)=>{try{return await api(`/repos/${r}/contents/${p}`)}catch{return null}};
+  const [t0,t1,b0,b1]=await Promise.all([g(tp,ps[0]),g(tp,ps[1]),g(S.r,ps[0]),g(S.r,ps[1])]);
+  const dec=x=>x?atob(x.content.replace(/\n/g,"")):"",e=$("#sync");
+  if(!t0||!ok(dec(t0))){TPLOK=true;e.hidden=false;e.textContent="Template (apk-template) belum diperbarui ke versi terbaru. Ganti generate.py dan build.yml di sana, lalu buka tab ini lagi.";return}
+  const bad=!b0||!ok(dec(b0))||!b1||(t1&&b1.sha!==t1.sha)||b0.sha!==t0.sha;
+  TPLOK=!bad;e.hidden=!bad;
+  e.innerHTML=bad?`Repo build-mu belum memakai template terbaru, sehingga proyekmu bisa diabaikan dan hasilnya aplikasi teks. <button class="btn" id="syb" style="margin-top:8px">Sinkronkan sekarang</button>`:"";
+  if(bad)$("#syb").onclick=syncTpl;
+ }catch{}
+}
+async function syncTpl(){
+ const b=$("#syb"),tp=S.tp||"buildernexa/apk-template";b.disabled=true;
+ try{
+  for(const [i,p] of ["tools/generate.py",".github/workflows/build.yml"].entries()){
+   b.textContent=`Menyinkronkan ${i+1}/2...`;
+   const t=await api(`/repos/${tp}/contents/${p}`);let sha;try{sha=(await api(`/repos/${S.r}/contents/${p}`)).sha}catch{}
+   await api(`/repos/${S.r}/contents/${p}`,{method:"PUT",body:JSON.stringify({message:"Sinkron template",content:t.content.replace(/\n/g,""),sha})});
+  }
+  toast("Repo build disinkronkan");TPLOK=null;await checkTpl();
+ }catch(e){b.disabled=false;b.textContent="Coba lagi";toast(e.message)}
+}
+function classify(u){
+ let x;try{x=new URL(u)}catch{return null}
+ if(!/^https?:$/.test(x.protocol))return null;
+ const h=x.hostname.replace(/^www\./,""),p=x.pathname;
+ if(/\.zip$/i.test(p)||/\/archive\/|\/zipball\//.test(p)||/^codeload\./.test(h))return{t:"ziplink"};
+ if(h==="github.com"&&/^\/[\w.-]+\/[\w.-]+/.test(p))return{t:"repo",gh:true};
+ if(/\.git$/.test(p)||(/^(gitlab\.com|bitbucket\.org|codeberg\.org|gitea\.com)$/.test(h)&&p.split("/").filter(Boolean).length>=2))return{t:"repo"};
+ return{t:"site"};
+}
+function srMap(){
+ const v=$("#sr").value;
+ if(v==="zip")return{sr:"zip"};
+ if(v==="scratch")return{sr:"scratch"};
+ const u=$("#su").value.trim(),k=classify(u);
+ if(!k)throw Error("URL tidak valid. Gunakan alamat http atau https.");
+ return k.t==="site"?{sr:"scratch",url:u,site:true,kind:""}:{sr:k.t,src:u};
+}
+async function readUrl(){
+ const u=$("#su").value.trim(),k=classify(u),ut=$("#ut");
+ if(!k){ut.hidden=true;$("#an").innerHTML=`<div class="card" style="box-shadow:2px 2px 0 #000"><b>URL tidak valid</b><p style="margin:6px 0 0">Gunakan alamat yang diawali http:// atau https://</p></div>`;return}
+ ut.hidden=false;ut.textContent={site:"Situs web",ziplink:"Link ZIP",repo:k.gh?"Repo GitHub":"Repo Git"}[k.t];
+ if(k.t==="repo"&&k.gh)return anRepo();
+ A=null;const x=new URL(u),nm=k.t==="site"?x.hostname.replace(/^www\./,"").split(".")[0]:decodeURIComponent(x.pathname.split("/").filter(Boolean).pop()||"app").replace(/\.(zip|git)$/i,"");
+ if(k.t==="site")anShow({kind:"site",conf:99,meta:{name:nm},perms:["internet"],warn:[],rec:["Situs ini dimuat di WebView. Aktifkan Halaman offline dan Tautan luar di bagian Tampilan dan perilaku."],n:0,url:u},nm);
+ else{$("#an").innerHTML=`<div class="card" style="box-shadow:2px 2px 0 #000"><b>${k.t==="ziplink"?"Link ZIP":"Repo Git"} diterima</b><p style="margin:6px 0 0">Isi proyek dibaca saat build karena browser tidak bisa membukanya langsung. Jenisnya dikenali otomatis di server.</p></div>`;prefill({meta:{name:nm},perms:[],kind:"x"},nm)}
+ URLOK=true;idleDraw();
+}
+async function saveKs(){
+ const f=$("#ksf").files[0],m=t=>$("#ksm").textContent=t,pw=$("#ksp").value,al=$("#kal").value.trim();
+ if(!S.t)return m("Hubungkan GitHub dulu.");if(!f)return m("Pilih file keystore.");if(!pw||!al)return m("Isi password dan alias.");
+ $("#ksb").disabled=true;
+ try{
+  m("1/4 Memuat enkripsi...");const so=(await import("https://cdn.jsdelivr.net/npm/libsodium-wrappers@0.7.13/+esm")).default;await so.ready;
+  m("2/4 Mengambil kunci repo...");const pk=await api(`/repos/${S.r}/actions/secrets/public-key`),key=so.from_base64(pk.key,so.base64_variants.ORIGINAL);
+  const enc=v=>so.to_base64(so.crypto_box_seal(so.from_string(v),key),so.base64_variants.ORIGINAL);
+  const b64=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(",")[1]);r.onerror=no;r.readAsDataURL(f)});
+  m("3/4 Menyimpan secrets...");
+  for(const [n,v] of [["KEYSTORE_B64",b64],["KS_PASS",pw],["KEY_ALIAS",al]])await api(`/repos/${S.r}/actions/secrets/${n}`,{method:"PUT",body:JSON.stringify({encrypted_value:enc(v),key_id:pk.key_id})});
+  m("4/4 Selesai. Keystore ini dipakai di build berikutnya.");$("#ksp").value="";toast("Keystore tersimpan");
+ }catch(e){m(e.message)}
+ $("#ksb").disabled=false;
+}
+let CMP=[];
+function cmpT(i){const k=CMP.indexOf(i);k>=0?CMP.splice(k,1):CMP.push(i);if(CMP.length>2)CMP.shift();hist()}
+function cmpHtml(){
+ if(!CMP.length)return"";if(CMP.length<2)return`<p>Pilih satu build lagi untuk dibandingkan.</p>`;
+ const [a,b]=CMP.map(i=>H[i]),sz=h=>((h.sum&&h.sum.files)||[]).reduce((x,f)=>x+f.size,0),sh=h=>(((h.sum&&h.sum.files)||[])[0]||{sha:"-"}).sha.slice(0,12);
+ const row=(l,x,y)=>`<tr class="${x===y?"":"df"}"><td>${l}</td><td>${esc(x)}</td><td>${esc(y)}</td></tr>`,cf=h=>h.cfg||{};
+ return `<div class="card"><h2>Perbandingan</h2><table class="ct">${row("Versi",a.vn+" ("+a.vc+")",b.vn+" ("+b.vc+")")}${row("Status",lab(a.st),lab(b.st))}${row("Durasi",fmtT(a.dur||0),fmtT(b.dur||0))}${row("Ukuran",fsz(sz(a)),fsz(sz(b)))}${row("Format",cf(a).fmt+" "+cf(a).var,cf(b).fmt+" "+cf(b).var)}${row("R8",cf(a).minify?"ya":"tidak",cf(b).minify?"ya":"tidak")}${row("Izin",(cf(a).perms||[]).join(", "),(cf(b).perms||[]).join(", "))}${row("SHA-256",sh(a),sh(b))}</table></div>`;
+}
+const lnk=i=>(H[i].assets&&H[i].assets[0]||{}).u||H[i].rel;
+function copyLink(i){navigator.clipboard.writeText(lnk(i)).then(()=>toast("Tautan disalin"))}
+async function qr(i){
+ const b=$("#qrb");if(b.innerHTML){b.innerHTML="";return}
+ try{
+  if(!window.qrcode)await new Promise((ok,no)=>{const x=document.createElement("script");x.src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js";x.onload=ok;x.onerror=()=>no(Error("QR gagal dimuat"));document.head.appendChild(x)});
+  const q=qrcode(0,"M");q.addData(lnk(i));q.make();b.innerHTML='<div class="card" style="display:grid;place-items:center;box-shadow:2px 2px 0 #000">'+q.createSvgTag({cellSize:5,margin:2})+"</div>";
+ }catch(e){toast(e.message)}
+}
+async function queue(){
+ if(!S.t)return 0;
+ try{
+  const r=await Promise.all(["in_progress","queued"].map(x=>api(`/repos/${S.r}/actions/runs?status=${x}&per_page=5`)));
+  const l=r.flatMap(x=>x.workflow_runs),b=$("#qb");b.hidden=!l.length||busy;
+  b.textContent=l.length?"Build lain di repo: "+l.map(x=>"#"+x.run_number+(x.status==="queued"?" (antre)":" (berjalan)")).join(", "):"";
+  return busy?0:l.length;
+ }catch{return 0}
+}
+function kv(e){
+ const s=e.sum||{},f=s.files||[];
+ return `<dl class="kv"><dt>Aplikasi</dt><dd>${esc(s.name||e.name)}</dd><dt>Package</dt><dd>${esc(s.pkg||e.cfg.pkg)}</dd><dt>Versi</dt><dd>${esc(e.vn)} (${e.vc})</dd><dt>Durasi</dt><dd>${fmtT(e.dur||0)}</dd></dl>${f.map(x=>`<div class="fl"><b>${esc(x.n)}</b> &middot; ${(x.size/1048576).toFixed(2)} MB<br><span class="mono">SHA-256 ${x.sha}</span></div>`).join("")}${(s.apk||[]).map(x=>`<div class="fl"><b>Isi APK</b> &middot; ${esc(x.label||"-")} &middot; ${esc(x.pkg)} ${esc(x.vn)} (${esc(x.vc)}) &middot; ${x.assets} berkas aset</div>`).join("")}${(s.gen||[]).length?`<details><summary>${s.gen.length} berkas dibuat</summary><pre>${esc(s.gen.join("\n"))}</pre></details>`:""}`;
+}
+function summ(e){
+ $("#rs").innerHTML=`<div class="card"><div class="wh"><h2>Ringkasan hasil</h2><span class="tag success">Berhasil</span></div>${kv(e)}<div class="stack">${(e.assets||[]).map((a,j)=>`<button class="btn" onclick="dl(0,${j})">Unduh ${esc(a.n)}</button>`).join("")}<button class="btn w" onclick="share(0)">Bagikan</button><button class="btn w" onclick="copyLink(0)">Salin tautan</button><button class="btn w" onclick="qr(0)">Tampilkan QR</button><div id="qrb"></div></div></div>`;
+}
+function share(i){const e=H[i],d={title:e.name,text:e.name+" v"+e.vn,url:e.rel};navigator.share?navigator.share(d).catch(()=>{}):navigator.clipboard.writeText(e.rel).then(()=>toast("Tautan disalin"))}
+async function dl(i,j){
+ const a=H[i].assets[j];if(!a.id){window.open(a.u,"_blank");return}
+ if(DL)return toast("Unduhan lain masih berjalan");
+ const ab=DL=new AbortController(),p=$("#dp");p.hidden=false;
+ const draw=(g,t,sp)=>{p.innerHTML=`<div class="wh"><b class="ell">${esc(a.n)}</b><button class="btn w" id="dc" style="width:auto;min-height:36px;padding:0 12px;box-shadow:none">Batal</button></div><div class="bar"><i style="width:${t?g/t*100:8}%"></i></div><p>${t?Math.round(g/t*100)+"% &middot; ":""}${(g/1048576).toFixed(1)}${t?" / "+(t/1048576).toFixed(1):""} MB &middot; ${(sp/1048576).toFixed(1)} MB/s</p>`;$("#dc").onclick=()=>ab.abort()};
+ draw(0,a.s||0,0);
+ try{
+  const r=await fetch(`https://api.github.com/repos/${S.r}/releases/assets/${a.id}`,{headers:{Accept:"application/octet-stream",Authorization:"Bearer "+S.t},signal:ab.signal});
+  if(!r.ok)throw Error(r.status);
+  const tot=+r.headers.get("content-length")||a.s||0,rd=r.body.getReader(),ch=[],t0=performance.now();let g=0;
+  for(;;){const {done,value}=await rd.read();if(done)break;ch.push(value);g+=value.length;draw(g,tot,g/((performance.now()-t0)/1000||1))}
+  const u=URL.createObjectURL(new Blob(ch,{type:"application/octet-stream"})),x=document.createElement("a");x.href=u;x.download=a.n;x.click();setTimeout(()=>URL.revokeObjectURL(u),9e3);toast("Unduhan selesai");
+ }catch(e){if(e.name==="AbortError")toast("Unduhan dibatalkan");else{toast("Unduhan langsung diblokir. Membuka tautan GitHub.");window.open(a.u,"_blank")}}
+ DL=null;p.hidden=true;
+}
+function notify(t){
+ if(!("Notification"in window)||Notification.permission!=="granted")return;
+ try{navigator.serviceWorker.ready.then(r=>r.showNotification("NexaBuild",{body:t}))}catch{}
+}
+async function build(){
+ if(busy)return;
+ if(!S.t){toast("Hubungkan GitHub dulu");drawer(true);return}
+ if(TPLOK===false){toast("Sinkronkan repo build dulu");$("#sync").scrollIntoView({behavior:"smooth"});return}
+ if(!val()){toast("Perbaiki isian yang ditandai");return}
+ let c;try{c=cfg()}catch(e){$("#bm").textContent=e.message;return}
+ if(await queue()){toast("Ada build lain yang sedang berjalan");return}
+ if("Notification"in window&&Notification.permission==="default")Notification.requestPermission();
+ busy=true;run=null;PL={};T={t0:Date.now(),steps:[],f:"",as:true,lf:0,pct:0,c,zip:c.sr==="zip"};
+ const tm=$("#term");tm.hidden=false;
+ $("#nl").innerHTML="";$("#gl").innerHTML="";$("#lgd").hidden=true;$("#lgd").open=false;$("#hn").innerHTML="";$("#rs").innerHTML="";$("#mu").hidden=true;$("#sq").value="";
+ $("#pct").dataset.v=0;$("#pct").textContent=0;$("#pf").style.width="0%";
+ document.querySelectorAll("[data-f]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f===""));$("#as").setAttribute("aria-pressed","true");
+ $("#go").disabled=true;$("#bm").textContent="";$("#logo").classList.add("spin");
+ tm.classList.remove("land");void tm.offsetWidth;tm.classList.add("land");
+ tmr=setInterval(termDraw,250);termDraw();plRender();tm.scrollIntoView({behavior:"smooth",block:"start"});
+ const e={id:Date.now(),name:c.name,vn:c.vn,vc:c.vc,st:"running",t:Date.now(),cfg:c};H.unshift(e);sv("h",H);stats();
+ const getJob=async()=>{const j=(await api(`/repos/${S.r}/actions/runs/${run.id}/jobs`)).jobs[0];if(j){T.steps=j.steps;j.steps.forEach(x=>PL[x.name]=x.conclusion||x.status)}return j};
+ const getLog=async j=>{T.log=await(await api(`/repos/${S.r}/actions/jobs/${j.id}/logs`,{raw:true})).text();logApply();const m=[...T.log.slice(-6000).matchAll(/> Task :([\w:.-]+)/g)];T.task=m.length?m[m.length-1][1].replace(/^app:/,""):""};
+ try{
+  if(c.sr==="zip")c.zip=await upZip(PF);
+  const prev=(await api(`/repos/${S.r}/actions/runs?per_page=1`)).workflow_runs[0]?.id||0;
+  const rp=await api("/repos/"+S.r);
+  await api(`/repos/${S.r}/actions/workflows/build.yml/dispatches`,{method:"POST",body:JSON.stringify({ref:rp.default_branch,inputs:{config:JSON.stringify(c)}})});
+  T.dsp=true;termDraw();
+  for(let i=0;i<20&&!run;i++){await sleep(3000);run=(await api(`/repos/${S.r}/actions/runs?event=workflow_dispatch&per_page=5`)).workflow_runs.find(r=>r.id>prev)||null}
+  if(!run)throw Error("Run tidak ditemukan. Pastikan build.yml ada di repo.");
+  let r,j;
+  for(let k=0;;k++){
+   j=await getJob();termDraw();plRender();
+   if(j&&!T.nolive)try{await getLog(j)}catch{if(++T.lf>2){T.nolive=true;line("nolive","Log langsung belum tersedia dari GitHub. Log lengkap muncul setelah selesai.","nt")}}
+   r=await api(`/repos/${S.r}/actions/runs/${run.id}`);
+   if(r.status==="completed")break;
+   await sleep(2500+Math.min(k,10)*250);
+  }
+  j=await getJob();try{await getLog(j)}catch{}
+  T.fin=true;T.ok=r.conclusion==="success";T.cx=r.conclusion==="cancelled";
+  e.st=r.conclusion;e.dur=Math.round((Date.parse(r.updated_at)-Date.parse(r.run_started_at))/1000);T.dur=e.dur;
+  e.sd={};KEY.forEach(k=>{const x=by(k);if(x&&x.conclusion==="success"&&x.started_at&&x.completed_at)e.sd[k]=Math.max(1,Math.round((Date.parse(x.completed_at)-Date.parse(x.started_at))/1000))});
+  plRender();termDraw();logDraw();
+  if(T.ok){
+   const rel=(await api(`/repos/${S.r}/releases?per_page=1`))[0];
+   e.rel=rel.html_url;e.relid=rel.id;e.tag=rel.tag_name;e.assets=rel.assets.map(a=>({n:a.name,u:a.browser_download_url,id:a.id,s:a.size}));
+   const m=(rel.body||"").match(/<!--nexa:(.*?)-->/s);try{e.sum=m?JSON.parse(m[1]):null}catch{}
+   sv("h",H);summ(e);
+  }else if(!T.cx){
+   const ev=(T.log||"").split("\n").filter(x=>cls(x)==="e").join("\n"),h=HINT.find(x=>x[0].test(ev));
+   e.hint=h?h[1]:"Buka run di GitHub untuk detail.";
+   $("#hn").innerHTML=`<div class="hint"><b>Penyebab kemungkinan</b><p>${esc(e.hint)}</p></div>`;
+  }
+ }catch(err){e.st="failure";T.fin=true;T.ok=false;T.dur=Math.round((Date.now()-T.t0)/1000);$("#bm").textContent=err.message;termDraw()}
+ clearInterval(tmr);$("#logo").classList.remove("spin");busy=false;run=null;$("#go").disabled=false;sv("h",H);stats();plRender();
+ toast(`${e.name}: ${lab(e.st)}`);notify(`${e.name} ${lab(e.st).toLowerCase()}`);queue();
+}
+async function cancel(){
+ if(!run)return toast("Tidak ada build yang berjalan");
+ try{await api(`/repos/${S.r}/actions/runs/${run.id}/cancel`,{method:"POST"});toast("Pembatalan dikirim")}catch(e){toast(e.message)}
+}
+function val(){
+ const p=$("#pkg").value.trim(),v=$("#vc").value,pb=!!p&&!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(p),vb=v!==""&&!(+v>0&&Number.isInteger(+v));
+ $("#pe").textContent=pb?"Format: com.contoh.app (huruf kecil, minimal dua bagian)":"";$("#ve").textContent=vb?"Harus bilangan bulat positif":"";
+ $("#pkg").setAttribute("aria-invalid",pb);$("#vc").setAttribute("aria-invalid",vb);auUI();return !pb&&!vb;
+}
+const TPL={"WebView":{ori:"unspecified",mf:1,pm:["internet"]},"Link-in-bio":{ori:"portrait",mf:1,pm:["internet"],col:"#ffd600"},"Portfolio":{ori:"unspecified",mf:1,pm:["internet"],col:"#000000"},"PWA wrapper":{ori:"unspecified",mf:1,pm:["internet","notifications"]},"Kiosk":{ori:"landscape",ki:1,pm:["internet"]}};
+const tplInit=()=>$("#tpl").innerHTML=Object.keys(TPL).map(k=>`<button class="chipb" onclick="tpl('${k}')">${k}</button>`).join("");
+function tpl(k){
+ const t=TPL[k];$("#ori").value=t.ori;$("#mf").checked=!!t.mf;$("#ki").checked=!!t.ki;if(t.col)$("#col").value=t.col;
+ document.querySelectorAll(".pm").forEach(x=>x.checked=t.pm.includes(x.value));
+ $("#v-build details").open=true;$("#url").focus();toast("Template "+k+" dimuat. Isi URL situsmu.");
+}
+async function upIcon(f){
+ const im=t=>$("#im").textContent=t;
+ if(!S.t){im("Hubungkan GitHub dulu.");return}
+ try{
+  im("1/3 Membaca ikon...");
+  const b=await new Promise((ok,no)=>{const x=new FileReader();x.onload=()=>ok(x.result.split(",")[1]);x.onerror=no;x.readAsDataURL(f)});
+  im("2/3 Memeriksa repo...");let sha;try{sha=(await api(`/repos/${S.r}/contents/assets/icon.png`)).sha}catch{}
+  im("3/3 Mengunggah ke repo...");
+  await api(`/repos/${S.r}/contents/assets/icon.png`,{method:"PUT",body:JSON.stringify({message:"Update ikon",content:b,sha})});
+  S.icon=true;sv("s",S);im("Ikon terpasang. Dipakai di build berikutnya.");toast("Ikon diunggah");
+ }catch(e){im(e.message)}
+}
+function cu(e,to){
+ const from=+e.dataset.v||0;e.dataset.v=to;
+ if(from===to||matchMedia("(prefers-reduced-motion:reduce)").matches){e.textContent=to;return}
+ const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600);e.textContent=Math.round(from+(to-from)*k);if(k<1)requestAnimationFrame(f)})(t0);
+}
+function streak(){const ds=new Set(H.map(h=>new Date(h.t).toDateString()));let n=0,d=new Date();if(!ds.has(d.toDateString()))d.setDate(d.getDate()-1);while(ds.has(d.toDateString())){n++;d.setDate(d.getDate()-1)}return n}
+function wNext(){
+ const n=H.length,ok=H.filter(h=>h.st==="success").length,sk=streak();let c=0;for(const h of H){if(h.st==="success")c++;else if(h.st!=="running")break}
+ const M=[["Build pertama",n>=1],["10 build",n>=10],["5 sukses beruntun",c>=5]];
+ const nx=!n?"Mulai dari template di tab Build. Cukup isi nama dan URL situs.":H[0].st==="failure"?"Build terakhir gagal. "+(H[0].hint||"Buka run di GitHub untuk detail."):!ok?"Tunggu build pertama selesai, lalu unduh hasilnya.":S.icon?"Coba format AAB untuk Play Store di Opsi lanjutan.":"Unggah ikon sendiri di Opsi lanjutan.";
+ return `<div class="card"><div class="wh"><h2>Pencapaian</h2><span class="tag ${sk?"success":""}">Streak ${sk} hari</span></div><div class="chips" style="margin:0 0 12px;flex-wrap:wrap">${M.map(([t,d])=>`<span class="tag ${d?"success":""}">${d?"Tercapai: ":""}${t}</span>`).join("")}</div><p style="margin:0">${esc(nx)}</p></div>`;
+}
+function presets(){$("#ps").innerHTML='<option value="">Pilih</option>'+Object.keys(PR).map(k=>`<option>${esc(k)}</option>`).join("")}
+
+/* events */
+$("#mn").onclick=()=>drawer(true);$("#dx").onclick=$("#sc").onclick=()=>drawer(false);
+$("#te").onclick=()=>{const i=$("#tk");i.type=i.type==="password"?"text":"password"};
+$("#lb").onclick=connect;$("#tt").onclick=test;$("#lo").onclick=disc;
+$("#go").onclick=build;$("#cn").onclick=cancel;
+$("#cp").onclick=()=>navigator.clipboard.writeText(termTxt()).then(()=>toast("Log disalin"));
+$("#dt").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([termTxt()],{type:"text/plain"}));a.download="nexabuild-log.txt";a.click()};
+$("#as").onclick=e=>{T.as=!T.as;e.currentTarget.setAttribute("aria-pressed",!!T.as)};
+document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{T.f=b.dataset.f;document.querySelectorAll("[data-f]").forEach(x=>x.setAttribute("aria-pressed",x===b));logDraw()});
+$("#sq").oninput=logDraw;document.querySelectorAll("#srcs button").forEach(b=>b.onclick=()=>setSrc(b.dataset.v));
+$("#zf").onchange=e=>e.target.files[0]&&onFile(e.target.files[0]);
+$("#dzx").onclick=e=>{e.preventDefault();PF=null;FZ=null;A=null;AUTO={};$("#zf").value="";$("#an").innerHTML="";$("#kdw").hidden=true;dzUI();auUI();idleDraw()};
+$("#anb").onclick=readUrl;$("#su").onchange=()=>{URLOK=false};$("#ksb").onclick=saveKs;
+$("#sb").onchange=()=>{if($("#sr").value==="zip"&&FZ)onFile(FZ);else if($("#sr").value==="url"&&$("#su").value.trim())readUrl()};
+$("#kd").onchange=()=>{idleDraw()};
+$("#name").oninput=$("#vn").oninput=auUI;
+document.addEventListener("click",e=>{const r=e.target.closest("[data-r]");if(r){$("#"+r.dataset.r).value=AUTO[r.dataset.r];auUI();val()}});
+
+$("#mm").onclick=e=>{const m=$("#mu");m.hidden=!m.hidden;e.currentTarget.setAttribute("aria-expanded",!m.hidden)};
+document.addEventListener("click",e=>{if(!e.target.closest("#mu,#mm"))$("#mu").hidden=true});
+$("#ex").onclick=()=>{try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(cfg(true),null,2)],{type:"application/json"}));a.download="nexabuild-config.json";a.click()}catch(e){toast(e.message)}};
+$("#im2").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const c=JSON.parse(await f.text());if(!c.name||!c.pkg)throw Error("Format tidak dikenali");fill(c);toast("Konfigurasi diimpor")}catch(x){toast(x.message)}e.target.value=""};
+let ipr;addEventListener("beforeinstallprompt",e=>{e.preventDefault();ipr=e;$("#ib").hidden=false});
+$("#ib").onclick=async()=>{ipr.prompt();await ipr.userChoice;$("#ib").hidden=true};$("#pkg").oninput=$("#vc").oninput=val;
+$("#ic").onchange=e=>e.target.files[0]&&upIcon(e.target.files[0]);
+$("#psv").onclick=()=>{const n=prompt("Nama preset");if(!n)return;try{PR[n]=cfg(true);sv("p",PR);presets();$("#ps").value=n;toast("Preset disimpan")}catch(e){toast(e.message)}};
+$("#ps").onchange=e=>{const c=PR[e.target.value];if(c){fill(c);toast("Preset dimuat")}};
+$("#hq").oninput=$("#hf").onchange=hist;
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(+b.dataset.t));
+let sx=0;$("#dr").addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true});
+$("#dr").addEventListener("touchend",e=>{if(e.changedTouches[0].clientX-sx<-60)drawer(false)},{passive:true});
+let py=null;
+addEventListener("touchstart",e=>{py=scrollY===0&&!document.body.classList.contains("open")&&tab!==1?e.touches[0].clientY:null},{passive:true});
+addEventListener("touchmove",e=>{if(py==null)return;const d=e.touches[0].clientY-py;$("#pt").style.transform=`translateY(${Math.max(0,Math.min(d,80))-60}px)`;$("#pt").textContent=d>70?"Lepas untuk muat ulang":"Tarik untuk muat ulang"},{passive:true});
+addEventListener("touchend",e=>{if(py==null)return;const d=e.changedTouches[0].clientY-py;py=null;$("#pt").style.transform="";if(d>70){loadProfile();if(tab===2)hist();toast("Dimuat ulang")}},{passive:true});
+addEventListener("online",()=>tab===0&&home());addEventListener("offline",()=>tab===0&&home());
+setInterval(stats,3000);setInterval(tick,1000);
+presets();ui();go(0);tplInit();val();idleDraw();termDraw();logDraw();if(S.t)loadProfile();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>
