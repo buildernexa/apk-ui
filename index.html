@@ -3,17 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5cf45">
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpolygon points='16,3 28,10 16,17 4,10' fill='%23fff'/%3E%3Cpolygon points='4,10 16,17 16,30 4,23' fill='%23FFD600'/%3E%3Cpolygon points='28,10 16,17 16,30 28,23' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Cg stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpolygon points='16,3 28,10 16,17 4,10' fill='%23fff'/%3E%3Cpolygon points='4,10 16,17 16,30 4,23' fill='%23FFD600'/%3E%3Cpolygon points='28,10 16,17 16,30 28,23' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/app.css">
 <title>NexaBuild</title>
-
-
-
-
-<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header id="bar">
@@ -21,7 +17,7 @@
 <h1>NexaBuild</h1>
 <svg class="lg" id="logo" viewBox="0 0 32 32" aria-hidden="true"><polygon points="16,3 28,10 16,17 4,10" fill="#fff"/><polygon points="4,10 16,17 16,30 4,23" fill="#FFD600"/><polygon points="28,10 16,17 16,30 28,23" fill="#fff"/></svg>
 </header>
-<div id="pullHint">Tarik untuk muat ulang</div>
+<div id="pt">Tarik untuk muat ulang</div>
 
 <main>
 <section id="v-home"></section>
@@ -43,17 +39,17 @@
 
 <div class="sc">
 <div class="sh"><b>Identitas</b></div>
-<label>Nama aplikasi<span class="au" data-f="name"></span><input id="name" autocomplete="off"></label>
-<label>Package name<span class="au" data-f="pkg"></span><input id="pkg" placeholder="otomatis jika kosong" autocapitalize="off"><small class="fe" id="pe"></small></label>
-<div class="g2c"><label>versionName<span class="au" data-f="vn"></span><input id="vn" value="1.0.0"></label><label>versionCode<span class="au" data-f="vc"></span><input id="vc" type="number" value="1" inputmode="numeric"><small class="fe" id="ve"></small></label></div>
+<label><span class="lb">Nama aplikasi<span class="au" data-f="name"></span></span><input id="name" autocomplete="off"></label>
+<label><span class="lb">Package name<span class="au" data-f="pkg"></span></span><input id="pkg" placeholder="otomatis jika kosong" autocapitalize="off"><small class="fe" id="pe"></small></label>
+<div class="g2c"><label><span class="lb">versionName<span class="au" data-f="vn"></span></span><input id="vn" value="1.0.0"></label><label><span class="lb">versionCode<span class="au" data-f="vc"></span></span><input id="vc" type="number" value="1" inputmode="numeric"><small class="fe" id="ve"></small></label></div>
 </div>
 
 <details class="sc" open><summary class="sh"><b>Tampilan dan perilaku</b></summary>
 <label>URL WebView<input id="url" type="url" placeholder="kosong = layar teks" autocapitalize="off"></label>
 <div class="g2c"><label>Orientasi<select id="ori"><option value="unspecified">Bebas</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label><label>Warna tema<input id="col" type="color" value="#ffd600"></label></div>
 <label class="sw"><span>Layar penuh</span><input type="checkbox" id="fs"></label>
-<div class="sw"><span>Warna status bar</span><input id="sc" type="color" value="#ffd600"><input type="checkbox" id="scb"></div>
-<label class="sw"><span>Tarik untuk muat ulang</span><input type="checkbox" id="pt"></label><label class="sw"><span>Halaman offline</span><input type="checkbox" id="of"></label><label class="sw"><span>Tautan luar dibuka di browser</span><input type="checkbox" id="ex"></label><label class="sw"><span>Izinkan zoom</span><input type="checkbox" id="zm"></label><label class="sw"><span>Layar tetap menyala</span><input type="checkbox" id="kp"></label><label class="sw"><span>Mode kiosk</span><input type="checkbox" id="ki"></label>
+<div class="sw"><span>Warna status bar</span><input id="stc" type="color" value="#ffd600"><input type="checkbox" id="scb"></div>
+<label class="sw"><span>Tarik untuk muat ulang</span><input type="checkbox" id="pull"></label><label class="sw"><span>Halaman offline</span><input type="checkbox" id="of"></label><label class="sw"><span>Tautan luar dibuka di browser</span><input type="checkbox" id="extl"></label><label class="sw"><span>Izinkan zoom</span><input type="checkbox" id="zm"></label><label class="sw"><span>Layar tetap menyala</span><input type="checkbox" id="kp"></label><label class="sw"><span>Mode kiosk</span><input type="checkbox" id="ki"></label>
 <label style="margin-top:10px">User agent<input id="ua" placeholder="bawaan" autocapitalize="off"></label>
 </details>
 
@@ -71,7 +67,7 @@
 <label>BuildConfig fields<textarea id="bc" rows="2" placeholder="API_URL=https://contoh.com" autocapitalize="off"></textarea></label>
 <label>Catatan rilis<input id="nt" placeholder="masuk ke GitHub Release"></label>
 <div class="g2c"><label>Preset<select id="ps"></select></label><label>&nbsp;<button class="btn w" id="psv">Simpan</button></label></div>
-<div class="g2c" style="margin-top:8px"><button class="btn w" id="exportCfg">Ekspor JSON</button><label class="btn w" style="margin:0;cursor:pointer">Impor JSON<input id="im2" type="file" accept=".json" hidden></label></div>
+<div class="g2c" style="margin-top:8px"><button class="btn w" id="ex">Ekspor JSON</button><label class="btn w" style="margin:0;cursor:pointer">Impor JSON<input id="im2" type="file" accept=".json" hidden></label></div>
 </details>
 
 <details class="sc"><summary class="sh"><b>Ikon</b></summary>
@@ -93,7 +89,7 @@
 <div class="tx"><span id="tt2" role="status" aria-live="polite">Menunggu build dimulai</span><em id="el">00:00</em></div>
 <button class="sq" id="mm" aria-label="Menu konsol" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 5h.01M12 12h.01M12 19h.01" stroke-width="4"/></svg></button></div>
 <div class="menu" id="mu" hidden>
-<button id="cp">Salin log</button><button id="downloadLog">Unduh .txt</button><button id="as" aria-pressed="true">Auto-scroll</button>
+<button id="cp">Salin log</button><button id="dt">Unduh .txt</button><button id="as" aria-pressed="true">Auto-scroll</button>
 <div class="mf"><button data-f="" aria-pressed="true">Semua</button><button data-f="w" aria-pressed="false">Peringatan</button><button data-f="e" aria-pressed="false">Error</button></div>
 <input id="sq" placeholder="Cari log" aria-label="Cari log"><button id="cn">Batalkan build</button></div>
 <div class="pbar"><i id="pf"></i></div>
@@ -115,7 +111,7 @@
 <button data-t="2" aria-label="Riwayat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Riwayat</span></button>
 </nav>
 
-<div id="drawerShade"></div>
+<div id="sc"></div>
 <aside id="dr" aria-label="Koneksi GitHub" aria-hidden="true">
 <div class="dh"><h2>Koneksi GitHub</h2><button class="sq" id="dx" aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div>
 <div class="card" id="ds"></div>
@@ -131,6 +127,16 @@
 <div id="dp" hidden></div>
 <div id="ts" role="status" aria-live="polite"></div>
 
-<script src="app.js" defer></script>
+
+<script src="js/core.js"></script>
+<script src="js/home.js"></script>
+<script src="js/history.js"></script>
+<script src="js/console.js"></script>
+<script src="js/analyze.js"></script>
+<script src="js/results.js"></script>
+<script src="js/build.js"></script>
+<script src="js/extras.js"></script>
+<script src="js/template.js"></script>
+<script src="js/boot.js"></script>
 </body>
 </html>
